@@ -1,3 +1,3 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-token = 'тут ваш токен' 
+token = '1182364187:AAG7PjbZoOKikc0JTEI9MTaMAX2YEW432II' 
