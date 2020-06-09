@@ -83,9 +83,12 @@ def check_for_numbers(r):
 def check_vault(str1):
     r = [] #содержит индексы местонахождения
     t = [] #содержит номера валют
+    index = 0
     for cur in range(len(config.ar_vault)):
-        if str1.find(config.ar_vault[cur]) != -1:
+        if str1.find(config.ar_vault[cur], index, len(config.ar_vault)) != -1:
             r.append(str1.find(config.ar_vault[cur]))
             t.append(cur)
+            cur -= 1
+            index = str1.find(config.ar_vault[cur])
     m = [r, t]
     return m
