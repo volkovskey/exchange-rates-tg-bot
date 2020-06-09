@@ -81,8 +81,11 @@ def check_for_numbers(r):
     return k
 
 def check_vault(str1):
-    r = [] #contain all currencies that were found in message
+    r = [] #содержит индексы местонахождения
+    t = [] #содержит номера валют
     for cur in range(len(config.ar_vault)):
         if str1.find(config.ar_vault[cur]) != -1:
             r.append(str1.find(config.ar_vault[cur]))
-    return r
+            t.append(cur)
+    m = [r, t]
+    return m

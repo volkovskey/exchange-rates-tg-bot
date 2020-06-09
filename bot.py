@@ -26,9 +26,9 @@ def main_void(message):
         #print(h)
         if h != []:
             output=""
-            for currency in h:
-                sum = check_and_search.search(s, currency)
-                output=output+ "======" + "\n"+check_and_search.change_vaults(sum, currency)
+            for currency in range(len(h[0])):
+                sum = check_and_search.search(s, h[0][currency])
+                output=output+ "======" + "\n"+check_and_search.change_vaults(sum, h[1][currency])
             bot.send_message(message.chat.id,output)
         else:
             print("no vaults")
