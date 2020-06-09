@@ -38,20 +38,21 @@ def search(str2, h):
 
 def change_vaults(money, h):
     s=""
+    print(config.exchange_rates)
     if h == 1 or h == 3 or h == 7:
         #print(type(money))
-        ua = round(money * 0.39, 2)
-        en = round(money * 0.015, 2)
+        ua = round(money * (config.exchange_rates['RUB']), 2)
+        en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
         s = str(money) + " RUB:" + "\n" + "\n" + "-" + str(ua) + " UAH" + "\n" + "-" + str(en) + " USD" + "\n"
     elif h == 0 or h == 2:
         #print("ua")
-        ru = round(money * 2.57, 2)
-        en = round(money * 0.038, 2)
+        ru = round(money * (1/config.exchange_rates['RUB']), 2)
+        en = round(money * (1/config.exchange_rates['USD']), 2)
         s = str(money) + " UAH:" + "\n" + "\n" + "-" + str(ru) + " RUB" + "\n" + "-" + str(en) + " USD" + "\n"
     elif h == 4 or h == 5 or h == 6:
         #print("en")
-        ru = round(money * 68.32, 2)
-        ua = round(money * 26.58, 2)
+        ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
+        ua = round(money * config.exchange_rates['USD'], 2)
         s = str(money) + " USD:" + "\n" + "\n" + "-" + str(ru) + " RUB" + "\n" + "-" + str(ua) + " UAH" + "\n"
     return s
 
