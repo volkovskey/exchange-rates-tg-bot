@@ -6,8 +6,13 @@ import config
 import check_and_search
 import telebot
 import json
+import schedule
+from threading import Thread
+
 
 bot = telebot.TeleBot(config.token, threaded = False)
+
+
 
 @bot.message_handler(content_types=["text"])
 def main_void(message):
@@ -28,5 +33,10 @@ def main_void(message):
     else:
         print("no numbers")
 
+
+
 if __name__ == '__main__':
-    bot.infinity_polling()
+    thread_main = Thread(target=bot.infinity_polling, args=(True,))
+    thread_main.start()
+    thread_exchange_rate = Thread(target=config.update_exchange_rate)
+    thread_exchange_rate.start()
