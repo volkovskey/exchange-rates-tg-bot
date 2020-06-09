@@ -25,6 +25,7 @@ def main_void(message):
         h = check_and_search.check_vault(s)
         #print(h)
         if h != []:
+            print("Не пустой")
             output=""
             for currency in range(len(h[0])):
                 sum = check_and_search.search(s, h[0][currency])
