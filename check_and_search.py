@@ -55,8 +55,6 @@ def check_for_numbers(r):
     return k
 
 def check_vault(str1):
-    global ar_vault
-    ar_vault = ["грн", "руб", "гривен", "р.", "дол", "бакс","$","₽"] #made global to avoid futher confusion
     r = [] #contain all currencies that were found in message
     for cur in range(len(ar_vault)):
         if str1.find(ar_vault[cur]) != -1:
