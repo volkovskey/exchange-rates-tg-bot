@@ -18,7 +18,22 @@ def search(str2, h):
             else:
                 j = False
                 first = index - m + 1
-    print(str2[last:])
+    elif str2[index - 1] == 'к' and str2[index - 2].isdigit():
+        str3 = str2[0:index - 1] + "000" + str2[index:len(str2) + 1]
+        str2 = str3
+        index = str3.find(vault)
+        last = index
+        first = 0
+        m = 1
+        j = True
+        while j:
+            if str3[index - m].isdigit():
+                m = m + 1
+                j = True
+            else:
+                j = False
+                first = index - m + 1
+    #print(str2[last:])
     return int(str2[first:last])
 
 def change_vaults(money, h):
