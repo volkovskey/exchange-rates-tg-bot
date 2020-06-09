@@ -43,7 +43,7 @@ def change_vaults(money, h):
         en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
         eu = round(money * (config.exchange_rates['RUB']/config.exchange_rates['EUR']), 2)
         bl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['BYN']), 2)
-        pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLN']), 2)
+        pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLZ']), 2)
         s = str(money) + " RUB:" + "\n" + "\n" + "•" + str(ua) + " UAH" + "\n" + "•" + str(en) + " USD" + "\n" + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
     elif h == 0 or h == 2:
         ru = round(money * (1/config.exchange_rates['RUB']), 2)
