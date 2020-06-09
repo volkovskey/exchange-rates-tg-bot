@@ -4,7 +4,7 @@ import json
 import telebot
 import config
 def search(str2, h):
-    vault = config.ar_vault[h]
+    vault = ar_vault[h]
     index = str2.find(vault)
     if str2[index - 1].isdigit():
         last = index
@@ -55,8 +55,10 @@ def check_for_numbers(r):
     return k
 
 def check_vault(str1):
+    global ar_vault
+    ar_vault = ["грн", "руб", "гривен", "р.", "дол", "бакс","$","₽"] #made global to avoid futher confusion
     r = [] #contain all currencies that were found in message
-    for cur in range(len(config.ar_vault)):
-        if str1.find(config.ar_vault[cur]) != -1:
+    for cur in range(len(ar_vault)):
+        if str1.find(ar_vault[cur]) != -1:
             r.append(cur)
     return r
