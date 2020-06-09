@@ -33,27 +33,28 @@ def search(str2, h):
             else:
                 j = False
                 first = index - m + 1
-    #print(str2[last:])
     return int(str2[first:last])
 
 def change_vaults(money, h):
     s=""
     print(config.exchange_rates)
-    if h == 1 or h == 3 or h == 7:
-        #print(type(money))
+    if h == 1 or h == 3 or h == 7 or 14 <= h <= 17:
         ua = round(money * (config.exchange_rates['RUB']), 2)
         en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
-        s = str(money) + " RUB:" + "\n" + "\n" + "-" + str(ua) + " UAH" + "\n" + "-" + str(en) + " USD" + "\n"
+        eu = round(money * (config.exchange_rates['RUB']/config.exchange_rates['EUR']), 2)
+        bl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['BYN']), 2)
+        pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLN']), 2)
+        s = str(money) + " RUB:" + "\n" + "\n" + "•" + str(ua) + " UAH" + "\n" + "•" + str(en) + " USD" + "\n" + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
     elif h == 0 or h == 2:
-        #print("ua")
         ru = round(money * (1/config.exchange_rates['RUB']), 2)
         en = round(money * (1/config.exchange_rates['USD']), 2)
-        s = str(money) + " UAH:" + "\n" + "\n" + "-" + str(ru) + " RUB" + "\n" + "-" + str(en) + " USD" + "\n"
-    elif h == 4 or h == 5 or h == 6:
-        #print("en")
+        s = str(money) + " UAH:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(en) + " USD" + "\n"
+    elif h == 4 or h == 5 or h == 6 or h == 8 or h == 9 or h == 19:
         ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['USD'], 2)
-        s = str(money) + " USD:" + "\n" + "\n" + "-" + str(ru) + " RUB" + "\n" + "-" + str(ua) + " UAH" + "\n"
+        s = str(money) + " USD:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"
+    elif h == 20 or h == 18 or h == 13 or h == 12:
+        s = str(money) + " USD:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"
     return s
 
 def delete_space(message):
