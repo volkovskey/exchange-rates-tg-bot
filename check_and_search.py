@@ -48,13 +48,24 @@ def change_vaults(money, h):
     elif h == 0 or h == 2:
         ru = round(money * (1/config.exchange_rates['RUB']), 2)
         en = round(money * (1/config.exchange_rates['USD']), 2)
-        s = str(money) + " UAH:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(en) + " USD" + "\n"
+        eu = round(money * (1/config.exchange_rates['EUR']), 2)
+        bl = round(money * (1/config.exchange_rates['BYN']), 2)
+        pl = round(money * (1/config.exchange_rates['PLZ']), 2)
+        s = str(money) + " UAH:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(en) + " USD" + "\n" + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
     elif h == 4 or h == 5 or h == 6 or h == 8 or h == 9 or h == 19:
         ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['USD'], 2)
-        s = str(money) + " USD:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"
+        eu = round(money * config.exchange_rates['USD']/config.exchange_rates['EUR'], 2)
+        pl = round(money * config.exchange_rates['USD']/config.exchange_rates['PLZ'], 2)
+        bl = round(money * config.exchange_rates['USD']/config.exchange_rates['BYN'], 2)
+        s = str(money) + " USD:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"  + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
     elif h == 20 or h == 18 or h == 13 or h == 12:
-        s = str(money) + " USD:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"
+        ru = round(money * config.exchange_rates['EUR']/config.exchange_rates['RUB'], 2)
+        ua = round(money * config.exchange_rates['EUR'], 2)
+        en = round(money * config.exchange_rates['EUR']/config.exchange_rates['USD'], 2)
+        pl = round(money * config.exchange_rates['EUR']/config.exchange_rates['PLZ'], 2)
+        bl = round(money * config.exchange_rates['EUR']/config.exchange_rates['BYN'], 2)
+        s = str(money) + " EUR:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"  + "•" + str(en) + " USD" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
     return s
 
 def delete_space(message):
