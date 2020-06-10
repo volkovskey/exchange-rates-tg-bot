@@ -6,6 +6,7 @@ import config
 def search(str2, index):
     first = 0
     last = 0
+    sum = 0
     if str2[index - 1].isdigit():
         last = index
         print(last)
@@ -13,27 +14,38 @@ def search(str2, index):
         j = True
         while j:
             if str2[index - m].isdigit():
-                m = m + 1
-                j = True
+                m += 1
+            elif str2[index - m] == '.' and str2[index - m - 1].isdigit():
+                m += 1
+            elif str2[index - m] == ',' and str2[index - m - 1].isdigit():
+                str2 = str2[0:index - m] + "." + str2[index - m + 1:len(str2)]
+                m += 1
             else:
                 j = False
                 first = index - m + 1
+        sum = float(str2[first:last])
     elif str2[index - 1] == 'к' and str2[index - 2].isdigit():
-        str3 = str2[0:index - 1] + "000" + str2[index:len(str2) + 1]
-        str2 = str3
-        index += 2
+        str3 = str2[0:index - 1] + str2[index:len(str2) + 1]
+        index -= 1
         last = index
-        print(last)
         m = 1
         j = True
         while j:
             if str3[index - m].isdigit():
-                m = m + 1
+                m += 1
+            elif str3[index - m] == '.' and str3[index - m - 1].isdigit():
+                m += 1
+            elif str3[index - m] == ',' and str3[index - m - 1].isdigit():
+                str3 = str3[0:index - m] + "." + str3[index - m + 1:len(str3)]
+                m += 1
             else:
                 j = False
                 first = index - m + 1
-    print(str2[first:last])
-    return int(str2[first:last])
+        sum = float(str3[first:last]) * 1000
+    #elif str2[index - 2] == 'к' and str2[index - 1] == 'к' and str3.isdigit():
+        #print("Hi")
+    print(sum)
+    return sum
 
 def change_vaults(money, h):
     s=""
@@ -66,7 +78,7 @@ def change_vaults(money, h):
         pl = round(money * config.exchange_rates['EUR']/config.exchange_rates['PLZ'], 2)
         bl = round(money * config.exchange_rates['EUR']/config.exchange_rates['BYN'], 2)
         s = "🇪🇺" + str(money) + " EUR:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif h == 21 or h == 22:
+    elif h == 21 or h == 22 or h == 29:
         ru = round(money * config.exchange_rates['BYN']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['BYN'], 2)
         en = round(money * config.exchange_rates['BYN']/config.exchange_rates['USD'], 2)
