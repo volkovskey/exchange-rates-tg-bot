@@ -36,7 +36,7 @@ def search(str2, h):
 
 def change_vaults(money, h):
     s=""
-    print(config.exchange_rates)
+    #print(config.exchange_rates)
     if h == 1 or h == 3 or h == 7 or 14 <= h <= 17:
         ua = round(money * (config.exchange_rates['RUB']), 2)
         en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
@@ -44,7 +44,7 @@ def change_vaults(money, h):
         bl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['BYN']), 2)
         pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLZ']), 2)
         s = "🇷🇺" + str(money) + " RUB:" + "\n" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif h == 0 or h == 2 or h == 8 or h == 9:
+    elif h == 0 or h == 2 or h == 8 or h == 9 or h == 23:
         ru = round(money * (1/config.exchange_rates['RUB']), 2)
         en = round(money * (1/config.exchange_rates['USD']), 2)
         eu = round(money * (1/config.exchange_rates['EUR']), 2)
@@ -91,13 +91,15 @@ def check_vault(str1):
     r = [] #содержит индексы местонахождения
     t = [] #содержит номера валют
     index = 0
-    for cur in range(len(config.ar_vault)):
-        if str1.find(config.ar_vault[cur], index, len(config.ar_vault)) != -1:
-            r.append(str1.find(config.ar_vault[cur]))
+    cur = 0
+    while cur < len(config.ar_vault):
+        if str1.find(config.ar_vault[cur], index) != -1:
+            r.append(str1.find(config.ar_vault[cur], index))
             t.append(cur)
-            index = str1.find(config.ar_vault[cur]) + 1
-            cur = cur - 1
-        print("cur: " + cur)
+            index = str1.find(config.ar_vault[cur], index) + 1
+            #cur +=1
+        else:
+            cur = cur + 1
+            index = 0
     m = [r, t]
-    print(m)
     return m

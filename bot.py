@@ -19,22 +19,28 @@ def main_void(message):
 @bot.message_handler(content_types=["text"])
 def main_void(message):
     #bot.send_message(message.chat.id, "Запуск основного метода")
+    print("Message:")
+    print(message.text)
     s = check_and_search.delete_space(message)
-    print(s)
+    #print(s)
     if check_and_search.check_for_numbers(s):
+        #print("Nums is ok")
         h = check_and_search.check_vault(s)
-        #print(h)
-        if h != []:
-            print("Не пустой")
+        print(h)
+        if h != [[],[]]:
+            #print("V is ok")
             output=""
             for currency in range(len(h[0])):
                 sum = check_and_search.search(s, h[0][currency])
                 output=output+ "======" + "\n"+check_and_search.change_vaults(sum, h[1][currency])
             bot.send_message(message.chat.id,output)
+            print("Answer: ")
+            print(output)
         else:
             print("no vaults")
     else:
         print("no numbers")
+    print("=================")
 
 
 
