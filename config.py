@@ -14,7 +14,8 @@ def schedule_update():
 
 def update_exchange_rate():
     print("Exchange rate update started!")
-    url = "https://api.privatbank.ua/p24api/exchange_rates?date="+date.today().strftime("%d.%m.%Y")
+    #url = "https://api.privatbank.ua/p24api/exchange_rates?date="+date.today().strftime("%d.%m.%Y")
+    url = "https://api.privatbank.ua/p24api/exchange_rates?date=10.06.2020"
     http = urllib3.PoolManager()
     response = http.request('GET', url)
     try:

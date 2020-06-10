@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import config
-import check_and_search
+import processing
 import telebot
 import json
 from threading import Thread
-
 
 bot = telebot.TeleBot(config.token, threaded = False)
 
@@ -20,28 +17,30 @@ def main_void(message):
 def main_void(message):
     #bot.send_message(message.chat.id, "Запуск основного метода")
     print("Message:")
+    print(message.chat.id)
     print(message.text)
-    s = check_and_search.delete_space(message)
-    #print(s)
-    if check_and_search.check_for_numbers(s):
-        #print("Nums is ok")
-        h = check_and_search.check_vault(s)
-        #print(h)
-        if h != [[],[]]:
-            #print("V is ok")
+    
+    mes = message.text
+    mes = mes.lower()
+    mes_ar = processing.special_split(mes)
+    mes_ar = processing.check_k(mes_ar)
+    print(mes_ar)
+    p = processing.search_numbers_and_vaults(mes_ar)
+    if p != [[],[]]:
+        SnV=processing.search(mes_ar, p)
+        print(SnV)
+        if SnV != [[],[]]:
             output=""
-            for currency in range(len(h[0])):
-                sum = check_and_search.search(s, h[0][currency])
-                #print(sum)
-                output=output+ "======" + "\n"+check_and_search.change_vaults(sum, h[1][currency])
+            i = 0
+            while i < len(SnV[0]):
+                print(i)
+                output=output+ "======" + "\n"+processing.output(SnV, i)
+                i += 1
             bot.reply_to(message, output)
             print("Answer: ")
             print(output)
-        else:
-            print("no vaults")
-    else:
-        print("no numbers")
     print("=================")
+    print("\n")
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
