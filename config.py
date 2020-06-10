@@ -33,4 +33,4 @@ def update_exchange_rate():
 
 #update_exchange_rate()
 token = '1182364187:AAG7PjbZoOKikc0JTEI9MTaMAX2YEW432II'
-ar_vault = ["грн", "руб", "гривен", "р.", "дол", "бакс","$","₽", "UAH", "uah", "USD", "usd", "EUR", "eur", "RUR", "RUB", "rur", "rub", "евро", "₴", "€", "BYN", "byn", "гривна"] #made global to avoid futher confusion
+ar_vault = ["грн", "руб", "гривен", "р.", "дол", "бакс","$","₽", "UAH", "uah", "USD", "usd", "EUR", "eur", "RUR", "RUB", "rur", "rub", "евро", "₴", "€", "BYN", "byn", "гривна", "зл", "pln", "PLN", "plz", "PLZ"] #made global to avoid futher confusion

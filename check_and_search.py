@@ -72,6 +72,13 @@ def change_vaults(money, h):
         eu = round(money * config.exchange_rates['BYN']/config.exchange_rates['EUR'], 2)
         pl = round(money * config.exchange_rates['BYN']/config.exchange_rates['PLZ'], 2)
         s = "🇧🇾" + str(money) + " BYN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
+    elif 24 <= h <= 28:
+        ru = round(money * config.exchange_rates['PLZ']/config.exchange_rates['RUB'], 2)
+        ua = round(money * config.exchange_rates['PLZ'], 2)
+        en = round(money * config.exchange_rates['PLZ']/config.exchange_rates['USD'], 2)
+        eu = round(money * config.exchange_rates['PLZ']/config.exchange_rates['EUR'], 2)
+        bl = round(money * config.exchange_rates['PLZ']/config.exchange_rates['BYN'], 2)
+        s = "🇵🇱" + str(money) + " PLN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n"
     return s
 
 def delete_space(message):
