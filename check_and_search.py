@@ -43,28 +43,28 @@ def change_vaults(money, h):
         eu = round(money * (config.exchange_rates['RUB']/config.exchange_rates['EUR']), 2)
         bl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['BYN']), 2)
         pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLZ']), 2)
-        s = str(money) + " RUB:" + "\n" + "\n" + "•" + str(ua) + " UAH" + "\n" + "•" + str(en) + " USD" + "\n" + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
-    elif h == 0 or h == 2:
+        s = "🇷🇺" + str(money) + " RUB:" + "\n" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
+    elif h == 0 or h == 2 or h == 8 or h == 9:
         ru = round(money * (1/config.exchange_rates['RUB']), 2)
         en = round(money * (1/config.exchange_rates['USD']), 2)
         eu = round(money * (1/config.exchange_rates['EUR']), 2)
         bl = round(money * (1/config.exchange_rates['BYN']), 2)
         pl = round(money * (1/config.exchange_rates['PLZ']), 2)
-        s = str(money) + " UAH:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(en) + " USD" + "\n" + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
-    elif h == 4 or h == 5 or h == 6 or h == 8 or h == 9 or h == 19:
+        s = "🇺🇦" + str(money) + " UAH:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
+    elif h == 4 or h == 5 or h == 6 or h == 19:
         ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['USD'], 2)
         eu = round(money * config.exchange_rates['USD']/config.exchange_rates['EUR'], 2)
         pl = round(money * config.exchange_rates['USD']/config.exchange_rates['PLZ'], 2)
         bl = round(money * config.exchange_rates['USD']/config.exchange_rates['BYN'], 2)
-        s = str(money) + " USD:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"  + "•" + str(eu) + " EUR" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
+        s = "🇺🇸" + str(money) + " USD:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif h == 20 or h == 18 or h == 13 or h == 12:
         ru = round(money * config.exchange_rates['EUR']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['EUR'], 2)
         en = round(money * config.exchange_rates['EUR']/config.exchange_rates['USD'], 2)
         pl = round(money * config.exchange_rates['EUR']/config.exchange_rates['PLZ'], 2)
         bl = round(money * config.exchange_rates['EUR']/config.exchange_rates['BYN'], 2)
-        s = str(money) + " EUR:" + "\n" + "\n" + "•" + str(ru) + " RUB" + "\n" + "•" + str(ua) + " UAH" + "\n"  + "•" + str(en) + " USD" + "\n" + "•" + str(bl) + " BYN" + "\n" + "•" + str(pl) + " PLN" + "\n"
+        s = "🇪🇺" + str(money) + " EUR:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     return s
 
 def delete_space(message):
@@ -88,7 +88,7 @@ def check_vault(str1):
         if str1.find(config.ar_vault[cur], index, len(config.ar_vault)) != -1:
             r.append(str1.find(config.ar_vault[cur]))
             t.append(cur)
+            index = str1.find(config.ar_vault[cur]) + 1
             cur -= 1
-            index = str1.find(config.ar_vault[cur])
     m = [r, t]
     return m
