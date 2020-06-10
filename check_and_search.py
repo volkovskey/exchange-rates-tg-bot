@@ -69,9 +69,9 @@ def change_vaults(money, h):
         ru = round(money * config.exchange_rates['BYN']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['BYN'], 2)
         en = round(money * config.exchange_rates['BYN']/config.exchange_rates['USD'], 2)
-        en = round(money * config.exchange_rates['BYN']/config.exchange_rates['EUR'], 2)
+        eu = round(money * config.exchange_rates['BYN']/config.exchange_rates['EUR'], 2)
         pl = round(money * config.exchange_rates['BYN']/config.exchange_rates['PLZ'], 2)
-        s = "🇧🇾" + str(money) + " BYN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(bl) + " EUR" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
+        s = "🇧🇾" + str(money) + " BYN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     return s
 
 def delete_space(message):
