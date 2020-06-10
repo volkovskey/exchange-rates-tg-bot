@@ -26,7 +26,7 @@ def main_void(message):
     if check_and_search.check_for_numbers(s):
         #print("Nums is ok")
         h = check_and_search.check_vault(s)
-        print(h)
+        #print(h)
         if h != [[],[]]:
             #print("V is ok")
             output=""
@@ -34,7 +34,7 @@ def main_void(message):
                 sum = check_and_search.search(s, h[0][currency])
                 #print(sum)
                 output=output+ "======" + "\n"+check_and_search.change_vaults(sum, h[1][currency])
-            bot.send_message(message.chat.id,output)
+            bot.reply_to(message, output)
             print("Answer: ")
             print(output)
         else:
@@ -42,10 +42,6 @@ def main_void(message):
     else:
         print("no numbers")
     print("=================")
-
-
-
-
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
