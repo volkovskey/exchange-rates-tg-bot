@@ -32,6 +32,7 @@ def main_void(message):
             output=""
             for currency in range(len(h[0])):
                 sum = check_and_search.search(s, h[0][currency])
+                #print(sum)
                 output=output+ "======" + "\n"+check_and_search.change_vaults(sum, h[1][currency])
             bot.send_message(message.chat.id,output)
             print("Answer: ")

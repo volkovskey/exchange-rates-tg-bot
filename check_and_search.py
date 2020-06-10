@@ -3,11 +3,12 @@
 import json
 import telebot
 import config
-def search(str2, h):
-    index = h
+def search(str2, index):
+    first = 0
+    last = 0
     if str2[index - 1].isdigit():
         last = index
-        first = 0
+        print(last)
         m = 1
         j = True
         while j:
@@ -20,18 +21,18 @@ def search(str2, h):
     elif str2[index - 1] == 'к' and str2[index - 2].isdigit():
         str3 = str2[0:index - 1] + "000" + str2[index:len(str2) + 1]
         str2 = str3
-        index = str3.find(config.ar_vault[h])
+        index += 2
         last = index
-        first = 0
+        print(last)
         m = 1
         j = True
         while j:
             if str3[index - m].isdigit():
                 m = m + 1
-                j = True
             else:
                 j = False
                 first = index - m + 1
+    print(str2[first:last])
     return int(str2[first:last])
 
 def change_vaults(money, h):
@@ -84,7 +85,7 @@ def change_vaults(money, h):
 def delete_space(message):
     s = message.text
     s = s.replace(' ', '')
-    return s    
+    return s
 
 def check_for_numbers(r):
     k = False
