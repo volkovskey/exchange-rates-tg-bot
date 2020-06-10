@@ -6,7 +6,7 @@ import config
 def search(str2, index):
     first = 0
     last = 0
-    sum = 0
+    #sum = 0
     if str2[index - 1].isdigit():
         last = index
         print(last)
