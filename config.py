@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import xmltodict
 import urllib3
-from datetime import date
+from datetime import date, timedelta
 import time
 
 
@@ -14,15 +14,22 @@ def schedule_update():
 
 def update_exchange_rate():
     print("Exchange rate update started!")
-    #url = "https://api.privatbank.ua/p24api/exchange_rates?date="+date.today().strftime("%d.%m.%Y")
-    url = "https://api.privatbank.ua/p24api/exchange_rates?date=10.06.2020"
+    url = "https://api.privatbank.ua/p24api/exchange_rates?date="+date.today().strftime("%d.%m.%Y")
+    #url = "https://api.privatbank.ua/p24api/exchange_rates?date=10.06.2020"
     http = urllib3.PoolManager()
     response = http.request('GET', url)
     try:
         data = xmltodict.parse(response.data)
     except:
         print("Failed to parse xml from response (%s)" % traceback.format_exc())
-    print(data['exchangerates']['exchangerate'][0])
+    try:
+        check = data['exchangerates']['exchangerate'][0]
+    except:
+        url = "https://api.privatbank.ua/p24api/exchange_rates?date="+(date.today()-timedelta(days=1)).strftime("%d.%m.%Y")
+        http = urllib3.PoolManager()
+        response = http.request('GET', url)
+        data = xmltodict.parse(response.data)
+    
     exchange_rates_temp = {}
     for rate in data['exchangerates']['exchangerate']:
         try:
