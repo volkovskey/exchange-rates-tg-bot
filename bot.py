@@ -16,15 +16,16 @@ def main_void(message):
 @bot.message_handler(content_types=["text"])
 def main_void(message):
     #bot.send_message(message.chat.id, "Запуск основного метода")
+    print("\n")
+    print("=================")
     print("Message:")
-    print(message.chat.id)
+    print(message.chat.username)
     print(message.text)
     
     mes = message.text
     mes = mes.lower()
     mes_ar = processing.special_split(mes)
-    mes_ar = processing.check_k(mes_ar)
-    print(mes_ar)
+    #print(mes_ar)
     p = processing.search_numbers_and_vaults(mes_ar)
     if p != [[],[]]:
         SnV=processing.search(mes_ar, p)
@@ -39,8 +40,6 @@ def main_void(message):
             bot.reply_to(message, output)
             print("Answer: ")
             print(output)
-    print("=================")
-    print("\n")
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
