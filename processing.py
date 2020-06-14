@@ -104,28 +104,28 @@ def output(a, i):
         en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
         eu = round(money * (config.exchange_rates['RUB']/config.exchange_rates['EUR']), 2)
         bl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['BYN']), 2)
-        pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLZ']), 2)
+        pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLN']), 2)
         s = "🇷🇺" + str(money) + " RUB:" + "\n" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif a[1][i] == 0:
         ru = round(money * (1/config.exchange_rates['RUB']), 2)
         en = round(money * (1/config.exchange_rates['USD']), 2)
         eu = round(money * (1/config.exchange_rates['EUR']), 2)
         bl = round(money * (1/config.exchange_rates['BYN']), 2)
-        pl = round(money * (1/config.exchange_rates['PLZ']), 2)
+        pl = round(money * (1/config.exchange_rates['PLN']), 2)
         s = "🇺🇦" + str(money) + " UAH:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif a[1][i] == 2:
         print("Started convert")
         ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['USD'], 2)
         eu = round(money * config.exchange_rates['USD']/config.exchange_rates['EUR'], 2)
-        pl = round(money * config.exchange_rates['USD']/config.exchange_rates['PLZ'], 2)
+        pl = round(money * config.exchange_rates['USD']/config.exchange_rates['PLN'], 2)
         bl = round(money * config.exchange_rates['USD']/config.exchange_rates['BYN'], 2)
         s = "🇺🇸" + str(money) + " USD:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif a[1][i] == 3:
         ru = round(money * config.exchange_rates['EUR']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['EUR'], 2)
         en = round(money * config.exchange_rates['EUR']/config.exchange_rates['USD'], 2)
-        pl = round(money * config.exchange_rates['EUR']/config.exchange_rates['PLZ'], 2)
+        pl = round(money * config.exchange_rates['EUR']/config.exchange_rates['PLN'], 2)
         bl = round(money * config.exchange_rates['EUR']/config.exchange_rates['BYN'], 2)
         s = "🇪🇺" + str(money) + " EUR:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif a[1][i] == 5:
@@ -133,14 +133,14 @@ def output(a, i):
         ua = round(money * config.exchange_rates['BYN'], 2)
         en = round(money * config.exchange_rates['BYN']/config.exchange_rates['USD'], 2)
         eu = round(money * config.exchange_rates['BYN']/config.exchange_rates['EUR'], 2)
-        pl = round(money * config.exchange_rates['BYN']/config.exchange_rates['PLZ'], 2)
+        pl = round(money * config.exchange_rates['BYN']/config.exchange_rates['PLN'], 2)
         s = "🇧🇾" + str(money) + " BYN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif a[1][i] == 4:
-        ru = round(money * config.exchange_rates['PLZ']/config.exchange_rates['RUB'], 2)
-        ua = round(money * config.exchange_rates['PLZ'], 2)
-        en = round(money * config.exchange_rates['PLZ']/config.exchange_rates['USD'], 2)
-        eu = round(money * config.exchange_rates['PLZ']/config.exchange_rates['EUR'], 2)
-        bl = round(money * config.exchange_rates['PLZ']/config.exchange_rates['BYN'], 2)
+        ru = round(money * config.exchange_rates['PLN']/config.exchange_rates['RUB'], 2)
+        ua = round(money * config.exchange_rates['PLN'], 2)
+        en = round(money * config.exchange_rates['PLN']/config.exchange_rates['USD'], 2)
+        eu = round(money * config.exchange_rates['PLN']/config.exchange_rates['EUR'], 2)
+        bl = round(money * config.exchange_rates['PLN']/config.exchange_rates['BYN'], 2)
         s = "🇵🇱" + str(money) + " PLN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n"
     return s
 
