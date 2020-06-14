@@ -19,11 +19,11 @@ def special_split(s):
         elif i == len(s) - 1:
             end = len(s)
             a.append(s[start:end])
-        elif s[i].isdigit() and not s[i + 1].isdigit() and s[i + 1] != " ":
+        elif s[i].isdigit() and not s[i + 1].isdigit() and s[i + 1] != " " and s[i + 1] != "." and s[i + 1] != ",":
             end = i + 1
             a.append(s[start:end])
             start = end
-        elif not s[i].isdigit() and s[i + 1].isdigit() and s[i] != " ":
+        elif not s[i].isdigit() and s[i + 1].isdigit() and s[i] != " " and s[i] != "," and s[i] != ".":
             end = i + 1
             a.append(s[start:end])
             start = end
