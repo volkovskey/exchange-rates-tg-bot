@@ -37,7 +37,10 @@ def main_void(message):
                 print(i)
                 output=output+ "======" + "\n"+processing.output(SnV, i)
                 i += 1
-            bot.reply_to(message, output)
+            try:
+                bot.reply_to(message, output)
+            except:
+                print("Error")
             print("Answer: ")
             print(output)
 
