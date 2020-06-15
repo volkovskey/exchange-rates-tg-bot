@@ -58,8 +58,19 @@ def search_numbers_and_vaults(l):
             while j < len(config.ar_vault[i]):
                 for u in range(len(l)):
                     if l[u].find(config.ar_vault[i][j]) != -1:
-                        r.append(u)
-                        t.append(i)
+                        if u != len(l) - 1 and u != 0:
+                            if l[u + 1].isdigit():
+                                r.append(u)
+                                t.append(i)
+                            elif l[u - 1].isdigit():
+                                r.append(u)
+                                t.append(i)
+                        elif u == len(l) - 1 and l[u - 1].isdigit():
+                            r.append(u)
+                            t.append(i)
+                        elif u == 0 and l[u + 1].isdigit():
+                            r.append(u)
+                            t.append(i)
                 j += 1
             i += 1
             j = 0
@@ -69,8 +80,19 @@ def search_numbers_and_vaults(l):
             while j < len(config.ar_vault_s[i]):
                 for u in range(len(l)):
                     if l[u] == config.ar_vault_s[i][j]:
-                        r.append(u)
-                        t.append(i)
+                        if u != len(l) - 1 and u != 0:
+                            if l[u + 1].isdigit():
+                                r.append(u)
+                                t.append(i)
+                            elif l[u - 1].isdigit():
+                                r.append(u)
+                                t.append(i)
+                        elif u == len(l) - 1 and l[u - 1].isdigit():
+                            r.append(u)
+                            t.append(i)
+                        elif u == 0 and l[u + 1].isdigit():
+                            r.append(u)
+                            t.append(i)
                 j += 1
             i += 1
             j = 0
