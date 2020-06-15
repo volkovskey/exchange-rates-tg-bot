@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import json
 import telebot
 import config
 
@@ -31,7 +30,7 @@ def special_split(s):
         if a[i][0].isdigit():
             if a[i].find(",") != -1:
                 a[i] = a[i].replace(",", ".")
-    print(a)
+    #print(a)
     
     i = len(a) - 1
     while i > 0:
@@ -42,7 +41,7 @@ def special_split(s):
             a[i - 1] = str(float(a[i - 1]) * 1000000)
             del a[i]
         i -= 1
-    #print(a)
+    print(a)
     return a
 
 def search_numbers_and_vaults(l):
@@ -59,16 +58,16 @@ def search_numbers_and_vaults(l):
                 for u in range(len(l)):
                     if l[u].find(config.ar_vault[i][j]) != -1:
                         if u != len(l) - 1 and u != 0:
-                            if l[u + 1].isdigit():
+                            if l[u + 1][0].isdigit():
                                 r.append(u)
                                 t.append(i)
-                            elif l[u - 1].isdigit():
+                            elif l[u - 1][0].isdigit():
                                 r.append(u)
                                 t.append(i)
-                        elif u == len(l) - 1 and l[u - 1].isdigit():
+                        elif u == len(l) - 1 and l[u - 1][0].isdigit():
                             r.append(u)
                             t.append(i)
-                        elif u == 0 and l[u + 1].isdigit():
+                        elif u == 0 and l[u + 1][0].isdigit():
                             r.append(u)
                             t.append(i)
                 j += 1
@@ -81,16 +80,16 @@ def search_numbers_and_vaults(l):
                 for u in range(len(l)):
                     if l[u] == config.ar_vault_s[i][j]:
                         if u != len(l) - 1 and u != 0:
-                            if l[u + 1].isdigit():
+                            if l[u + 1][0].isdigit():
                                 r.append(u)
                                 t.append(i)
-                            elif l[u - 1].isdigit():
+                            elif l[u - 1][0].isdigit():
                                 r.append(u)
                                 t.append(i)
-                        elif u == len(l) - 1 and l[u - 1].isdigit():
+                        elif u == len(l) - 1 and l[u - 1][0].isdigit():
                             r.append(u)
                             t.append(i)
-                        elif u == 0 and l[u + 1].isdigit():
+                        elif u == 0 and l[u + 1][0].isdigit():
                             r.append(u)
                             t.append(i)
                 j += 1
