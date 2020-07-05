@@ -6,7 +6,6 @@ import config
 def special_split(s):
     while s.find("  ") != -1:
         s = s.replace("  ", " ")
-
     a = []
     start = 0
     end = 0
@@ -18,6 +17,10 @@ def special_split(s):
         elif i == len(s) - 1:
             end = len(s)
             a.append(s[start:end])
+        elif not s[i].isdigit() and s[i + 1] == "." or not s[i].isdigit() and s[i + 1] == "," or not s[i].isdigit() and s[i + 1] == "/":
+            end = i + 1
+            a.append(s[start:end])
+            start = end
         elif s[i].isdigit() and not s[i + 1].isdigit() and s[i + 1] != " " and s[i + 1] != "." and s[i + 1] != ",":
             end = i + 1
             a.append(s[start:end])
@@ -30,7 +33,6 @@ def special_split(s):
         if a[i][0].isdigit():
             if a[i].find(",") != -1:
                 a[i] = a[i].replace(",", ".")
-    #print(a)
     
     i = len(a) - 1
     while i > 0:
@@ -111,6 +113,7 @@ def search(a, m):
         elif a[e - 1][0].isdigit():
             suma.append(a[e - 1])
         i -= 1
+    suma.reverse()
     answ_ar = [suma, m[1]]
     return answ_ar
 

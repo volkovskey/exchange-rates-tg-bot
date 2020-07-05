@@ -10,7 +10,6 @@ def schedule_update():
         exchange_rates = update_exchange_rate()
         time.sleep(43200)
 
-
 def update_exchange_rate():
     print("Exchange rate update started!")
     url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange"
@@ -19,8 +18,7 @@ def update_exchange_rate():
     try:
         data = xmltodict.parse(response.data)
     except:
-        print("Failed to parse xml from response (%s)" %
-                traceback.format_exc())
+        print("Failed to parse xml from response (%s)" %traceback.format_exc())
     exchange_rates_temp = {}
     for rate in data['exchange']['currency']:
         try:
@@ -30,13 +28,12 @@ def update_exchange_rate():
     print(exchange_rates_temp)
     return exchange_rates_temp.copy()
 
-
 #update_exchange_rate()
-token = 'token'
+token = ''
 # made global to avoid futher confusion
 ar_vault = [["uah", "грн", "гривн", "гривен", "₴"],
             ["rub", "rur", "рубль", "рубля", "рублю", "рублём", "рублем", "рубли", "рублей", "рублям", "рублях", "₽"],
-            ["usd", "доллар", "$"],
+            ["usd", "доллар", "бакс", "$"],
             ["eur", "евро", "€"],
             ["plz", "pln", "злотый", "злотого", "злотому", "злотым", "злотые", "злотых", "злотыми"],
             ["byn"]]
