@@ -4,6 +4,7 @@ import telebot
 import config
 
 def special_split(s):
+    s = s.replace("\n",",")
     while s.find("  ") != -1:
         s = s.replace("  ", " ")
     a = []
