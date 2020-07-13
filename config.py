@@ -29,11 +29,11 @@ def update_exchange_rate():
     return exchange_rates_temp.copy()
 
 #update_exchange_rate()
-token = ''
+token = '' #here your token
 # made global to avoid futher confusion
 ar_vault = [["uah", "грн", "гривн", "гривен", "₴"],
             ["rub", "rur", "рубль", "рубля", "рублю", "рублём", "рублем", "рубли", "рублей", "рублям", "рублях", "₽"],
-            ["usd", "доллар", "бакс", "$"],
+            ["usd", "доллар", "бакс", "бачей", "$"],
             ["eur", "евро", "€"],
             ["plz", "pln", "злотый", "злотого", "злотому", "злотым", "злотые", "злотых", "злотыми"],
             ["byn"]]

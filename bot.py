@@ -10,7 +10,7 @@ bot = telebot.TeleBot(config.token, threaded = False)
 
 @bot.message_handler(commands=['about'])
 def main_void(message):
-    s = "Привет, я бот! Моя задача - распознавать в тексте суммы денег и переводить их в нужные валюты. Это может значительно упростить вам общение." + "\n" + "Авторы:" + "\n" + "@vladikko" + "\n" + "@volkovskey"
+    s = "Привет, я бот! Моя задача - распознавать в тексте суммы денег и переводить их в нужные валюты. Это может значительно упростить вам общение." + "\n" + "Авторы:" + "\n" + "@vladikko" + "\n" + "@volkovskey" + "\n"+ "Версия: 1.0"
     bot.send_message(message.chat.id, s)
 
 @bot.message_handler(content_types=["text"])
