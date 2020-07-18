@@ -3,10 +3,13 @@
 import config
 import processing
 import telebot
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 import json
 from threading import Thread
 
 bot = telebot.TeleBot(config.token, threaded = False)
+markup = InlineKeyboardMarkup()
+markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
 @bot.message_handler(commands=['about'])
 def main_void(message):
@@ -42,11 +45,16 @@ def main_void(message):
                 output=output+ "======" + "\n"+processing.output(SnV, i)
                 i += 1
             try:
-                bot.reply_to(message, output)
+                bot.reply_to(message, output, reply_markup=markup)
             except:
                 print("Error")
             print("Answer: ")
             print(output)
+
+@bot.callback_query_handler(func=lambda call: True)
+def cb_answer(call):
+    bot.delete_message(call.message.chat.id, call.message.message_id)
+        
               
 if __name__ == '__main__':
     #config.update_exchange_rate()
