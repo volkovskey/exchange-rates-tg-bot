@@ -4,10 +4,14 @@ import telebot
 import config
 
 def special_split(s):
-    s = s.replace("\n",",")
-    while s.find("  ") != -1:
+    s = s.replace("\n", ",") #Replace hyphenation with comma
+
+    while s.find("  ") != -1: #Removing double spaces
         s = s.replace("  ", " ")
-    a = []
+
+    s = s.replace(",", ".") #comma to dot
+
+    a = [] #The main array to which the result will be written
     start = 0
     end = 0
     for i in range(len(s)):
@@ -18,32 +22,30 @@ def special_split(s):
         elif i == len(s) - 1:
             end = len(s)
             a.append(s[start:end])
-        elif not s[i].isdigit() and s[i + 1] == "." or not s[i].isdigit() and s[i + 1] == "," or not s[i].isdigit() and s[i + 1] == "/":
+        elif not s[i].isdigit() and s[i + 1] == "." or not s[i].isdigit() and s[i + 1] == "/": #separating letters from symbols
             end = i + 1
             a.append(s[start:end])
             start = end
-        elif s[i].isdigit() and not s[i + 1].isdigit() and s[i + 1] != " " and s[i + 1] != "." and s[i + 1] != ",":
+        elif s[i].isdigit() and not s[i + 1].isdigit() and s[i + 1] != " " and s[i + 1] != ".": #separating a digit from a letter
             end = i + 1
             a.append(s[start:end])
             start = end
-        elif not s[i].isdigit() and s[i + 1].isdigit() and s[i] != " " and s[i] != "," and s[i] != ".":
+        elif not s[i].isdigit() and s[i + 1].isdigit() and s[i] != " " and s[i] != ".": #separating a letter from a digit
             end = i + 1
             a.append(s[start:end])
             start = end
-    for i in range(len(a)):
-        if a[i][0].isdigit():
-            if a[i].find(",") != -1:
-                a[i] = a[i].replace(",", ".")
     
     i = len(a) - 1
     while i > 0:
-        if a[i] == "к" and a[i - 1][0].isdigit():
+        if a[i] == "к" and a[i - 1][0].isdigit(): #2.5к = 2500
             a[i - 1] = str(float(a[i - 1]) * 1000)
             del a[i]
-        elif a[i] == "кк" and a[i - 1][0].isdigit():
+        elif a[i] == "кк" and a[i - 1][0].isdigit(): #2.5кк = 2500000
             a[i - 1] = str(float(a[i - 1]) * 1000000)
             del a[i]
         i -= 1
+    print("")
+    print("Result array:")
     print(a)
     return a
 
