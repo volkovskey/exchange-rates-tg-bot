@@ -37,6 +37,22 @@ def main_void(message):
     #Splitting the text of the message into the necessary components
     mes_ar = processing.special_split(mes)
     
+    #Checking for commands from the bot
+    if mes_ar[0] == "-help" or mes_ar[0] == "-h": #It`s information about main commands and functional
+        bot.reply_to(message, "Тут текст сообщения")
+    elif mes_ar[0] == "-settings" or mes_ar[0] == "-s": #It`s settings for bot: list of currency, timer for delete message, tun on/off button "delete" and etc
+        can_user_edit_settings = False #It`s var shows whether a person can control the bot 
+        if message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
+            us_id = message.from_user.id #Get person`s ID
+            user = bot.get_chat_member(message.chat.id, us_id) #Get information about person
+            if user.status == "administrator" or user.status == "creator": #Check for admin/creator
+                can_user_edit_settings = True
+            else:
+                bot.reply_to(message, "У тебя нет право на это")
+        else:
+            can_user_edit_settings = True
+        if can_user_edit_settings:
+            bot.reply_to(message, "Настройки появятся в ближайшем будущем")
     #
     p = processing.search_numbers_and_vaults(mes_ar)
     if p != [[],[]]:
@@ -47,7 +63,7 @@ def main_void(message):
             i = 0
             while i < len(SnV[0]):
                 print(i)
-                output=output+ "======" + "\n"+processing.output(SnV, i)
+                output=output+ "======" + "\n" + processing.output(SnV, i)
                 i += 1
             try:
                 bot.reply_to(message, output, reply_markup=markup)
