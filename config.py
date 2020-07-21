@@ -26,6 +26,7 @@ def update_exchange_rate():
         except:
             print("couldnt parse part of exchange rates")
     print(exchange_rates_temp)
+    
     return exchange_rates_temp.copy()
 
 #update_exchange_rate()

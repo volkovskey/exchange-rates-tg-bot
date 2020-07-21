@@ -120,13 +120,11 @@ def search(a, m):
     answ_ar = [suma, m[1]]
     return answ_ar
 
-
 def output(a, i):
     s=""
     #print(config.exchange_rates)
     money = float(a[0][i])
     if a[1][i] == 1:
-        print("Started convert")
         ua = round(money * (config.exchange_rates['RUB']), 2)
         en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
         eu = round(money * (config.exchange_rates['RUB']/config.exchange_rates['EUR']), 2)
@@ -141,7 +139,6 @@ def output(a, i):
         pl = round(money * (1/config.exchange_rates['PLN']), 2)
         s = "🇺🇦" + str(money) + " UAH:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
     elif a[1][i] == 2:
-        print("Started convert")
         ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
         ua = round(money * config.exchange_rates['USD'], 2)
         eu = round(money * config.exchange_rates['USD']/config.exchange_rates['EUR'], 2)
