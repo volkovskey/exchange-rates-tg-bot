@@ -74,7 +74,10 @@ def main_void(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def cb_answer(call):
-    bot.delete_message(call.message.chat.id, call.message.message_id)
+    try:
+        bot.delete_message(call.message.chat.id, call.message.message_id)
+    except:
+        print("Error")
         
               
 if __name__ == '__main__':
