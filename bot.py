@@ -24,6 +24,7 @@ def main_void(message):
     print("Username: " + str(message.chat.username) + ", ID: " + str(message.chat.id))
     print("")
     print("Message: " + str(message.text))
+    print(message.chat)
     
     #Select the text that will be processed: a text message, or a description of the photo
     if message.content_type == "photo":
@@ -74,10 +75,21 @@ def main_void(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def cb_answer(call):
-    try:
-        bot.delete_message(call.message.chat.id, call.message.message_id)
-    except:
-        print("Error")
+    can_user_delete_message = False #It`s var shows whether a person can control the bot 
+    if call.message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
+        us_id = call.from_user.id #Get person`s ID
+        user = bot.get_chat_member(call.message.chat.id, us_id) #Get information about person
+        if user.status == "administrator" or user.status == "creator": #Check for admin/creator
+            can_user_delete_message = True
+        else:
+            print("Access denied")
+    else:
+        can_user_delete_message = True
+    if can_user_delete_message:
+        try:
+            bot.delete_message(call.message.chat.id, call.message.message_id)
+        except:
+            print("Error")
         
               
 if __name__ == '__main__':
