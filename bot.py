@@ -71,6 +71,9 @@ def main_void(message):
                 print("Error")
             print("Answer: ")
             print(output)
+    elif message.chat.type == "private":
+        bot.reply_to(message,"Эта валюта отсутствует в базе данных",reply_markup=markup)
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def cb_answer(call):
