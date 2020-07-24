@@ -13,8 +13,15 @@ markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
 @bot.message_handler(commands=['about'])
 def main_void(message):
-    s = "Привет, я бот! Моя задача - распознавать в тексте суммы денег и переводить их в нужные валюты. Это может значительно упростить вам общение." + "\n" + "Авторы:" + "\n" + "@vladikko" + "\n" + "@volkovskey" + "\n"+ "Версия: 1.0.1"
-    bot.send_message(message.chat.id, s)
+    about_c_file = open("texts/about_command.ertb")
+    about_c_text = about_c_file.read()
+    bot.send_message(message.chat.id, about_c_text)
+
+@bot.message_handler(commands=['help'])
+def main_void(message):
+    help_c_file = open("texts/help_command.ertb")
+    help_c_text = help_c_file.read()
+    bot.send_message(message.chat.id, help_c_text)
 
 @bot.message_handler(content_types=["text", "photo"])
 def main_void(message):
@@ -24,7 +31,28 @@ def main_void(message):
     print("Username: " + str(message.chat.username) + ", ID: " + str(message.chat.id))
     print("")
     print("Message: " + str(message.text))
-    print(message.chat)
+    print(message.chat.type)
+
+    #statistics
+    if str(message.chat.type) == "private":
+        file_with_list_of_id = open("logs/id_private.ertb")
+    else:
+        file_with_list_of_id = open("logs/id_groups.ertb")
+    list_of_id = file_with_list_of_id.readlines()
+    for i in range(len(list_of_id) - 1):
+        list_of_id[i] = list_of_id[i][0:len(list_of_id[i]) - 1]
+    if str(message.chat.id) in list_of_id:
+        print("fdg")
+    else:
+        file_with_list_of_id.close()
+        if str(message.chat.type) == "private":
+            file_with_list_of_id = open("logs/id_private.ertb", "w")
+        else:
+            file_with_list_of_id = open("logs/id_groups.ertb", "w")
+        for i in range(len(list_of_id)):
+            file_with_list_of_id.write(str(list_of_id[i]) + "\n")
+        file_with_list_of_id.write(str(message.chat.id))
+    file_with_list_of_id.close()
     
     #Select the text that will be processed: a text message, or a description of the photo
     if message.content_type == "photo":
@@ -40,7 +68,9 @@ def main_void(message):
     
     #Checking for commands from the bot
     if mes_ar[0] == "-help" or mes_ar[0] == "-h": #It`s information about main commands and functional
-        bot.reply_to(message, "Тут текст сообщения")
+        help_file = open("texts/help.ertb")
+        help_text = help_file.read()
+        bot.reply_to(message, help_text)
     elif mes_ar[0] == "-settings" or mes_ar[0] == "-s": #It`s settings for bot: list of currency, timer for delete message, tun on/off button "delete" and etc
         can_user_edit_settings = False #It`s var shows whether a person can control the bot 
         if message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
@@ -54,6 +84,18 @@ def main_void(message):
             can_user_edit_settings = True
         if can_user_edit_settings:
             bot.reply_to(message, "Настройки появятся в ближайшем будущем")
+    elif mes_ar[0] == "-stats":
+        if str(message.chat.id) == config.creator_id:
+            file_with_list_of_id = open("logs/id_private.ertb")
+            list_of_id = file_with_list_of_id.readlines()
+            len_private = len(list_of_id)
+            file_with_list_of_id.close()
+            file_with_list_of_id = open("logs/id_groups.ertb")
+            list_of_id = file_with_list_of_id.readlines()
+            len_groups = len(list_of_id)
+            file_with_list_of_id.close()
+            answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
+            bot.send_message(config.creator_id, answer)
     #
     p = processing.search_numbers_and_vaults(mes_ar)
     if p != [[],[]]:
@@ -73,7 +115,7 @@ def main_void(message):
             print("Answer: ")
             print(output)
     elif message.chat.type == "private":
-        bot.reply_to(message,"Эта валюта отсутствует в базе данных",reply_markup=markup)
+        bot.reply_to(message,"Эта валюта отсутствует в базе данных", reply_markup=markup)
 
 
 @bot.callback_query_handler(func=lambda call: True)

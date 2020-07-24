@@ -31,10 +31,11 @@ def update_exchange_rate():
 
 #update_exchange_rate()
 token = '' #here your token
+creator_id = "no" #Here you need to enter the ID of the person / chat who will have access to statistics
 # made global to avoid futher confusion
 ar_vault = [["грн", "гривн", "гривен", "₴"],
             ["rur", "рубль", "рубля", "рублю", "рублём", "рублем", "рубли", "рублей", "рублям", "рублях", "₽"],
-            ["доллар", "бакс", "бачей", "зелен", "уе", "$"],
+            ["доллар", "бакс", "бачей", "зелен", "$"],
             ["евро", "€"],
             ["злотый", "злотого", "злотому", "злотым", "злотые", "злотых", "злотыми"],
             ["белрубль"]]
