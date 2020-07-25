@@ -24,7 +24,7 @@ async def main_void(message: types.Message):
     help_c_text = help_c_file.read()
     await message.reply(help_c_text,reply_markup = markup)
 
-@dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO)
+@dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO or ContentType.VIDEO)
 async def main_void(message: types.Message):
     #Printing information about input message
     print("")
@@ -57,11 +57,7 @@ async def main_void(message: types.Message):
     except:
         print("Error")
     
-    #Select the text that will be processed: a text message, or a description of the photo
-    #if message.content_type() is ContentType.PHOTO:
-    #    mes = message.caption
-    #else:
-        mes = message.text
+    mes = message.text
     
     #To simplify processing, translate the message into lowercase
     mes = mes.lower()
@@ -113,13 +109,16 @@ async def main_void(message: types.Message):
                 output=output+ "======" + "\n" + processing.output(SnV, i)
                 i += 1
             try:
-                await message.reply(output,reply_markup = markup)
+                if message.chat.type != "private":
+                    await message.reply(output,reply_markup = markup)
+                else:
+                    await message.reply(output)
             except:
                 print("Error")
             print("Answer: ")
             print(output)
     elif message.chat.type == "private":
-        await message.reply("Эта валюта отсутствует в базе данных",reply_markup = markup)
+        await message.reply("Эта валюта отсутствует в базе данных")
 
 
 @dp.callback_query_handler(lambda call: True)
@@ -140,7 +139,9 @@ async def cb_answer(call: types.CallbackQuery):
             await call.message.delete()
         except:
             print("Error")
-        
+
+def bot_stats():
+    print("Ready")
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
@@ -148,3 +149,5 @@ if __name__ == '__main__':
     thread_main.start()
     thread_exchange_rate = Thread(target=config.schedule_update)
     thread_exchange_rate.start()
+    thread_stats = Thread(target=bot_stats)
+    thread_stats.start()
