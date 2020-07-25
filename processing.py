@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import telebot
 import config
 
 def special_split(s):
@@ -50,9 +49,11 @@ def special_split(s):
     return a
 
 def search_numbers_and_vaults(l):
+    k = False
     for i in range(len(l)):
         if l[i][0].isdigit():
             k = True
+            break
     if k:
         r = [] #содержит индексы местонахождения
         t = [] #содержит номера валют

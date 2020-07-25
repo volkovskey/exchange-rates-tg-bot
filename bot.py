@@ -2,39 +2,40 @@
 # -*- coding: utf-8 -*-
 import config
 import processing
-import telebot
-from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
-import json
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.types.message import ContentType
+from aiogram.types.inline_keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 from threading import Thread
 
-bot = telebot.TeleBot(config.token, threaded = False) #bot and its atributes declaration
+bot = Bot(token=config.token) #bot and its atributes declaration
+dp = Dispatcher(bot)
 markup = InlineKeyboardMarkup()
 markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
-@bot.message_handler(commands=['about'])
-def main_void(message):
+@dp.message_handler(commands=['about'])
+async def main_void(message: types.Message):
     about_c_file = open("texts/about_command.ertb")
     about_c_text = about_c_file.read()
-    bot.send_message(message.chat.id, about_c_text)
+    await message.reply(about_c_text,reply_markup = markup)
 
-@bot.message_handler(commands=['help'])
-def main_void(message):
+@dp.message_handler(commands=['help'])
+async def main_void(message: types.Message):
     help_c_file = open("texts/help_command.ertb")
     help_c_text = help_c_file.read()
-    bot.send_message(message.chat.id, help_c_text)
+    await message.reply(help_c_text,reply_markup = markup)
 
-@bot.message_handler(content_types=["text", "photo"])
-def main_void(message):
+@dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO)
+async def main_void(message: types.Message):
     #Printing information about input message
     print("")
     print("******************************")
-    print("Username: " + str(message.chat.username) + ", ID: " + str(message.chat.id))
+    print("Username: " + str(message.from_user.username) + ", ID: " + str(message.chat.id)+ ", Chat: "+str(message.chat.title))
     print("")
     print("Message: " + str(message.text))
 
     #statistics
     try:
-        if str(message.chat.type) == "private":
+        if message.chat.is_private():
             file_with_list_of_id = open("logs/id_private.ertb")
         else:
             file_with_list_of_id = open("logs/id_groups.ertb")
@@ -45,7 +46,7 @@ def main_void(message):
             print("fdg")
         else:
             file_with_list_of_id.close()
-            if str(message.chat.type) == "private":
+            if message.chat.is_private():
                 file_with_list_of_id = open("logs/id_private.ertb", "w")
             else:
                 file_with_list_of_id = open("logs/id_groups.ertb", "w")
@@ -57,9 +58,9 @@ def main_void(message):
         print("Error")
     
     #Select the text that will be processed: a text message, or a description of the photo
-    if message.content_type == "photo":
-        mes = message.caption
-    else:
+    #if message.content_type() is ContentType.PHOTO:
+    #    mes = message.caption
+    #else:
         mes = message.text
     
     #To simplify processing, translate the message into lowercase
@@ -73,22 +74,20 @@ def main_void(message):
         if mes_ar[0] == "-help" or mes_ar[0] == "-h": #It`s information about main commands and functional
             help_file = open("texts/help.ertb")
             help_text = help_file.read()
-            bot.reply_to(message, help_text)
+            await message.reply(help_text,reply_markup = markup)
         elif mes_ar[0] == "-settings" or mes_ar[0] == "-s": #It`s settings for bot: list of currency, timer for delete message, tun on/off button "delete" and etc
             can_user_edit_settings = False #It`s var shows whether a person can control the bot 
             if message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
-                us_id = message.from_user.id #Get person`s ID
-                user = bot.get_chat_member(message.chat.id, us_id) #Get information about person
-                if user.status == "administrator" or user.status == "creator": #Check for admin/creator
+                if message.chat.get_member(message.from_user.id).is_chat_admin(): #Check for admin/creator
                     can_user_edit_settings = True
                 else:
-                    bot.reply_to(message, "У тебя нет право на это")
+                    await message.reply("У тебя нет право на это",reply_markup = markup)
             else:
                 can_user_edit_settings = True
             if can_user_edit_settings:
-                bot.reply_to(message, "Настройки появятся в ближайшем будущем")
+                await message.reply("Настройки появятся в ближайшем будущем",reply_markup = markup)
         elif mes_ar[0] == "-stats":
-            if str(message.chat.id) in config.creator_id:
+            if str(message.chat_id) in config.creator_id:
                 file_with_list_of_id = open("logs/id_private.ertb")
                 list_of_id = file_with_list_of_id.readlines()
                 len_private = len(list_of_id)
@@ -98,7 +97,7 @@ def main_void(message):
                 len_groups = len(list_of_id)
                 file_with_list_of_id.close()
                 answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
-                bot.send_message(message.chat.id, answer)
+                await message.reply(answer,reply_markup = markup)
     except:
         print("Error")
     #
@@ -114,22 +113,23 @@ def main_void(message):
                 output=output+ "======" + "\n" + processing.output(SnV, i)
                 i += 1
             try:
-                bot.reply_to(message, output, reply_markup=markup)
+                await message.reply(output,reply_markup = markup)
             except:
                 print("Error")
             print("Answer: ")
             print(output)
     elif message.chat.type == "private":
-        bot.reply_to(message,"Эта валюта отсутствует в базе данных", reply_markup=markup)
+        await message.reply("Эта валюта отсутствует в базе данных",reply_markup = markup)
 
 
-@bot.callback_query_handler(func=lambda call: True)
-def cb_answer(call):
-    can_user_delete_message = False #It`s var shows whether a person can control the bot 
-    if call.message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
-        us_id = call.from_user.id #Get person`s ID
-        user = bot.get_chat_member(call.message.chat.id, us_id) #Get information about person
-        if user.status == "administrator" or user.status == "creator": #Check for admin/creator
+@dp.callback_query_handler(lambda call: True)
+async def cb_answer(call: types.CallbackQuery):
+    can_user_delete_message = False #It`s var shows whether a person     can control the bot 
+    print(call.message.chat.all_members_are_administrators)
+    if call.message.chat.all_members_are_administrators == None:
+        can_user_delete_message = True
+    elif call.message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
+        if call.message.chat.get_member(call.from_user.id).is_chat_admin(): #Check for admin/creator
             can_user_delete_message = True
         else:
             print("Access denied")
@@ -137,14 +137,14 @@ def cb_answer(call):
         can_user_delete_message = True
     if can_user_delete_message:
         try:
-            bot.delete_message(call.message.chat.id, call.message.message_id)
+            await call.message.delete()
         except:
             print("Error")
         
-              
+
 if __name__ == '__main__':
     #config.update_exchange_rate()
-    thread_main = Thread(target=bot.infinity_polling, args=(True,))
+    thread_main = Thread(target=executor.start_polling, args=(dp,))
     thread_main.start()
     thread_exchange_rate = Thread(target=config.schedule_update)
     thread_exchange_rate.start()
