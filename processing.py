@@ -49,60 +49,54 @@ def special_split(s):
     return a
 
 def search_numbers_and_vaults(l):
-    k = False
-    for i in range(len(l)):
-        if l[i][0].isdigit():
-            k = True
-            break
-    if k:
-        r = [] #содержит индексы местонахождения
-        t = [] #содержит номера валют
-        i = 0
+    r = [] #содержит индексы местонахождения
+    t = [] #содержит номера валют
+    i = 0
+    j = 0
+    while i < len(config.ar_vault):
+        while j < len(config.ar_vault[i]):
+            for u in range(len(l)):
+                if l[u].find(config.ar_vault[i][j]) != -1:
+                    if u != len(l) - 1 and u != 0:
+                        if l[u + 1][0].isdigit():
+                            r.append(u)
+                            t.append(i)
+                        elif l[u - 1][0].isdigit():
+                            r.append(u)
+                            t.append(i)
+                    elif u == len(l) - 1 and l[u - 1][0].isdigit():
+                        r.append(u)
+                        t.append(i)
+                    elif u == 0 and l[u + 1][0].isdigit():
+                        r.append(u)
+                        t.append(i)
+            j += 1
+        i += 1
         j = 0
-        while i < len(config.ar_vault):
-            while j < len(config.ar_vault[i]):
-                for u in range(len(l)):
-                    if l[u].find(config.ar_vault[i][j]) != -1:
-                        if u != len(l) - 1 and u != 0:
-                            if l[u + 1][0].isdigit():
-                                r.append(u)
-                                t.append(i)
-                            elif l[u - 1][0].isdigit():
-                                r.append(u)
-                                t.append(i)
-                        elif u == len(l) - 1 and l[u - 1][0].isdigit():
+    i = 0
+    j = 0
+    while i < len(config.ar_vault_s):
+        while j < len(config.ar_vault_s[i]):
+            for u in range(len(l)):
+                if l[u] == config.ar_vault_s[i][j]:
+                    if u != len(l) - 1 and u != 0:
+                        if l[u + 1][0].isdigit():
                             r.append(u)
                             t.append(i)
-                        elif u == 0 and l[u + 1][0].isdigit():
+                        elif l[u - 1][0].isdigit():
                             r.append(u)
                             t.append(i)
-                j += 1
-            i += 1
-            j = 0
-        i = 0
+                    elif u == len(l) - 1 and l[u - 1][0].isdigit():
+                        r.append(u)
+                        t.append(i)
+                    elif u == 0 and l[u + 1][0].isdigit():
+                        r.append(u)
+                        t.append(i)
+            j += 1
+        i += 1
         j = 0
-        while i < len(config.ar_vault_s):
-            while j < len(config.ar_vault_s[i]):
-                for u in range(len(l)):
-                    if l[u] == config.ar_vault_s[i][j]:
-                        if u != len(l) - 1 and u != 0:
-                            if l[u + 1][0].isdigit():
-                                r.append(u)
-                                t.append(i)
-                            elif l[u - 1][0].isdigit():
-                                r.append(u)
-                                t.append(i)
-                        elif u == len(l) - 1 and l[u - 1][0].isdigit():
-                            r.append(u)
-                            t.append(i)
-                        elif u == 0 and l[u + 1][0].isdigit():
-                            r.append(u)
-                            t.append(i)
-                j += 1
-            i += 1
-            j = 0
-        m = [r, t]
-        print(m)
+    m = [r, t]
+    print(m)
     return m
 
 def search(a, m):

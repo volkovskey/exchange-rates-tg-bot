@@ -6,6 +6,9 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.message import ContentType
 from aiogram.types.inline_keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 from threading import Thread
+import csv
+import time
+import datetime
 
 bot = Bot(token=config.token) #bot and its atributes declaration
 dp = Dispatcher(bot)
@@ -83,7 +86,7 @@ async def main_void(message: types.Message):
             if can_user_edit_settings:
                 await message.reply("Настройки появятся в ближайшем будущем",reply_markup = markup)
         elif mes_ar[0] == "-stats":
-            if str(message.chat_id) in config.creator_id:
+            if str(message.chat.id) in config.creator_id:
                 file_with_list_of_id = open("logs/id_private.ertb")
                 list_of_id = file_with_list_of_id.readlines()
                 len_private = len(list_of_id)
@@ -93,11 +96,19 @@ async def main_void(message: types.Message):
                 len_groups = len(list_of_id)
                 file_with_list_of_id.close()
                 answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
-                await message.reply(answer,reply_markup = markup)
+                await message.reply(answer)
     except:
         print("Error")
     #
-    p = processing.search_numbers_and_vaults(mes_ar)
+    k = False
+    for i in range(len(mes_ar)):
+        if mes_ar[i][0].isdigit():
+            k = True
+            break
+    if k:
+        p = processing.search_numbers_and_vaults(mes_ar)
+    else:
+        p = [[],[]]
     if p != [[],[]]:
         SnV=processing.search(mes_ar, p)
         print(SnV)
@@ -118,7 +129,7 @@ async def main_void(message: types.Message):
             print("Answer: ")
             print(output)
     elif message.chat.type == "private":
-        await message.reply("Эта валюта отсутствует в базе данных")
+        await message.reply("Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'.")
 
 
 @dp.callback_query_handler(lambda call: True)
@@ -141,7 +152,32 @@ async def cb_answer(call: types.CallbackQuery):
             print("Error")
 
 def bot_stats():
-    print("Ready")
+    while True:
+        with open('logs/stats.csv') as f:
+            reader = csv.reader(f)
+            data_list = list(reader)
+        try:
+            file_with_list_of_id = open("logs/id_private.ertb")
+            list_of_id = file_with_list_of_id.readlines()
+            len_private = len(list_of_id)
+            file_with_list_of_id.close()
+            file_with_list_of_id = open("logs/id_groups.ertb")
+            list_of_id = file_with_list_of_id.readlines()
+            len_groups = len(list_of_id)
+            file_with_list_of_id.close()
+            now = datetime.datetime.now()
+            m=[str(now), len_private, len_groups]
+            print(m)
+            data_list.append(m)
+            with open('logs/stats.csv', 'w') as f:
+                writer = csv.writer(f)
+                for row in data_list:
+                    writer.writerow(row)
+        except:
+            print("Error")
+        time.sleep(43200)
+        
+
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
