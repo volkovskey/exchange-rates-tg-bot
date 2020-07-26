@@ -38,7 +38,7 @@ async def main_void(message: types.Message):
 
     #statistics
     try:
-        if message.chat.is_private():
+        if message.chat.type == "private":
             file_with_list_of_id = open("logs/id_private.ertb")
         else:
             file_with_list_of_id = open("logs/id_groups.ertb")
@@ -49,7 +49,7 @@ async def main_void(message: types.Message):
             print("fdg")
         else:
             file_with_list_of_id.close()
-            if message.chat.is_private():
+            if message.chat.type == "private":
                 file_with_list_of_id = open("logs/id_private.ertb", "w")
             else:
                 file_with_list_of_id = open("logs/id_groups.ertb", "w")
@@ -58,7 +58,7 @@ async def main_void(message: types.Message):
             file_with_list_of_id.write(str(message.chat.id))
         file_with_list_of_id.close()
     except:
-        print("Error")
+        print("Error stats")
     
     mes = message.text
     
@@ -167,7 +167,6 @@ def bot_stats():
             file_with_list_of_id.close()
             now = datetime.datetime.now()
             m=[str(now), len_private, len_groups]
-            print(m)
             data_list.append(m)
             with open('logs/stats.csv', 'w') as f:
                 writer = csv.writer(f)
@@ -175,7 +174,7 @@ def bot_stats():
                     writer.writerow(row)
         except:
             print("Error")
-        time.sleep(43200)
+        time.sleep(86400)
         
 
 
