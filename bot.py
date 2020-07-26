@@ -135,11 +135,13 @@ async def main_void(message: types.Message):
 @dp.callback_query_handler(lambda call: True)
 async def cb_answer(call: types.CallbackQuery):
     can_user_delete_message = False #It`s var shows whether a person     can control the bot 
-    print(call.message.chat.all_members_are_administrators)
-    if call.message.chat.all_members_are_administrators == None:
+    if call.message.chat.all_members_are_administrators == True:
         can_user_delete_message = True
     elif call.message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
-        if call.message.chat.get_member(call.from_user.id).is_chat_admin(): #Check for admin/creator
+        print(call.from_user.id)
+        member = await call.message.chat.get_member(call.from_user.id)
+        print(member)
+        if member.status == "administrator": #Check for admin/creator
             can_user_delete_message = True
         else:
             print("Access denied")
