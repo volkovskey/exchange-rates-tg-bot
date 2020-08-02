@@ -26,22 +26,23 @@ def update_exchange_rate():
         except:
             print("couldnt parse part of exchange rates")
     print(exchange_rates_temp)
-    
     return exchange_rates_temp.copy()
 
-#update_exchange_rate()
 token = '' #here your token
 creator_id = ["no"] #Here you need to enter the ID of the person / chat who will have access to statistics
+
 # made global to avoid futher confusion
 ar_vault = [["грн", "гривн", "гривен", "₴"],
-            ["rur", "рубль", "рубля", "рублю", "рублём", "рублем", "рубли", "рублей", "рублям", "рублях", "₽"],
+            ["rur", "рубль", "рубл", "₽"],
             ["доллар", "бакс", "бачей", "зелен", "$"],
             ["евро", "€"],
-            ["злотый", "злотого", "злотому", "злотым", "злотые", "злотых", "злотыми"],
-            ["белрубль"]]
+            ["злот"],
+            ["белрубл"],
+            ["юан", "жэньминьби"]]
 ar_vault_s = [["uah"],
-            ["rub", "руб"],
+            ["rub", "руб", "р"],
             ["usd", "дол", "долл"],
             ["eur"],
             ["plz", "pln", "зл",],
-            ["byn", "бр",]]
+            ["byn", "бр",],
+            ["cny", "rmb"]]

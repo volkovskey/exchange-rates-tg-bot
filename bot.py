@@ -17,15 +17,51 @@ markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
 @dp.message_handler(commands=['about'])
 async def main_void(message: types.Message):
-    about_c_file = open("texts/about_command.ertb")
-    about_c_text = about_c_file.read()
-    await message.reply(about_c_text,reply_markup = markup)
+    about_file = open("texts/about.ertb")
+    about_text = about_file.read()
+    if message.chat.type != "private":
+        await message.reply(about_text, reply_markup = markup)
+    else:
+        await message.reply(about_text)
 
 @dp.message_handler(commands=['help'])
 async def main_void(message: types.Message):
-    help_c_file = open("texts/help_command.ertb")
-    help_c_text = help_c_file.read()
-    await message.reply(help_c_text,reply_markup = markup)
+    help_file = open("texts/help.ertb")
+    help_text = help_file.read()
+    if message.chat.type != "private":
+        await message.reply(help_text, reply_markup = markup)
+    else:
+        await message.reply(help_text)
+
+@dp.message_handler(commands=['settings'])
+async def main_void(message: types.Message):
+    can_user_edit_settings = False #It`s var shows whether a person can control the bot 
+    if message.chat.all_members_are_administrators != True and message.chat.type != "private": #Checking for the type of chat administration: all admins, or specific people
+        if message.chat.get_member(message.from_user.id).is_chat_admin(): #Check for admin/creator
+            can_user_edit_settings = True
+        else:
+            await message.reply("У тебя нет право на это", reply_markup = markup)
+    else:
+        can_user_edit_settings = True
+    if can_user_edit_settings:
+        if message.chat.type != "private":
+            await message.reply("Настройки появятся в ближайшем будущем", reply_markup = markup)
+        else:
+            await message.reply("Настройки появятся в ближайшем будущем")
+
+@dp.message_handler(commands=['stats'])
+async def main_void(message: types.Message):
+    if str(message.chat.id) in config.creator_id:
+        file_with_list_of_id = open("logs/id_private.ertb")
+        list_of_id = file_with_list_of_id.readlines()
+        len_private = len(list_of_id)
+        file_with_list_of_id.close()
+        file_with_list_of_id = open("logs/id_groups.ertb")
+        list_of_id = file_with_list_of_id.readlines()
+        len_groups = len(list_of_id)
+        file_with_list_of_id.close()
+        answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
+        await message.reply(answer)
 
 @dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO or ContentType.VIDEO)
 async def main_void(message: types.Message):
@@ -68,69 +104,41 @@ async def main_void(message: types.Message):
     #Splitting the text of the message into the necessary components
     mes_ar = processing.special_split(mes)
     
-    #Checking for commands from the bot
     try:
-        if mes_ar[0] == "-help" or mes_ar[0] == "-h": #It`s information about main commands and functional
-            help_file = open("texts/help.ertb")
-            help_text = help_file.read()
-            await message.reply(help_text,reply_markup = markup)
-        elif mes_ar[0] == "-settings" or mes_ar[0] == "-s": #It`s settings for bot: list of currency, timer for delete message, tun on/off button "delete" and etc
-            can_user_edit_settings = False #It`s var shows whether a person can control the bot 
-            if message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
-                if message.chat.get_member(message.from_user.id).is_chat_admin(): #Check for admin/creator
-                    can_user_edit_settings = True
-                else:
-                    await message.reply("У тебя нет право на это",reply_markup = markup)
-            else:
-                can_user_edit_settings = True
-            if can_user_edit_settings:
-                await message.reply("Настройки появятся в ближайшем будущем",reply_markup = markup)
-        elif mes_ar[0] == "-stats":
-            if str(message.chat.id) in config.creator_id:
-                file_with_list_of_id = open("logs/id_private.ertb")
-                list_of_id = file_with_list_of_id.readlines()
-                len_private = len(list_of_id)
-                file_with_list_of_id.close()
-                file_with_list_of_id = open("logs/id_groups.ertb")
-                list_of_id = file_with_list_of_id.readlines()
-                len_groups = len(list_of_id)
-                file_with_list_of_id.close()
-                answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
-                await message.reply(answer)
+        #Checking for commands from the bot
+        k = False
+        for i in range(len(mes_ar)):
+            if mes_ar[i][0].isdigit():
+                k = True
+                break
+        if k:
+            p = processing.search_numbers_and_vaults(mes_ar)
+        else:
+            p = [[],[]]
+        if p != [[],[]]:
+            SnV=processing.search(mes_ar, p)
+            print(SnV)
+            if SnV != [[],[]]:
+                output=""
+                i = 0
+                while i < len(SnV[0]):
+                    print(i)
+                    output=output+ "======" + "\n" + processing.output(SnV, i)
+                    i += 1
+                try:
+                    if message.chat.type != "private":
+                        await message.reply(output,reply_markup = markup)
+                    else:
+                        await message.reply(output)
+                except:
+                    print("Error")
+                print("Answer: ")
+                print(output)
+        elif message.chat.type == "private":
+            await message.reply("Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'.")
+    
     except:
         print("Error")
-    #
-    k = False
-    for i in range(len(mes_ar)):
-        if mes_ar[i][0].isdigit():
-            k = True
-            break
-    if k:
-        p = processing.search_numbers_and_vaults(mes_ar)
-    else:
-        p = [[],[]]
-    if p != [[],[]]:
-        SnV=processing.search(mes_ar, p)
-        print(SnV)
-        if SnV != [[],[]]:
-            output=""
-            i = 0
-            while i < len(SnV[0]):
-                print(i)
-                output=output+ "======" + "\n" + processing.output(SnV, i)
-                i += 1
-            try:
-                if message.chat.type != "private":
-                    await message.reply(output,reply_markup = markup)
-                else:
-                    await message.reply(output)
-            except:
-                print("Error")
-            print("Answer: ")
-            print(output)
-    elif message.chat.type == "private":
-        await message.reply("Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'.")
-
 
 @dp.callback_query_handler(lambda call: True)
 async def cb_answer(call: types.CallbackQuery):

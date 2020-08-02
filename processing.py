@@ -161,5 +161,11 @@ def output(a, i):
         eu = round(money * config.exchange_rates['PLN']/config.exchange_rates['EUR'], 2)
         bl = round(money * config.exchange_rates['PLN']/config.exchange_rates['BYN'], 2)
         s = "🇵🇱" + str(money) + " PLN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n"
+    elif a[1][i] == 6:
+        ru = round(money * config.exchange_rates['CNY']/config.exchange_rates['RUB'], 2)
+        ua = round(money * config.exchange_rates['CNY'], 2)
+        en = round(money * config.exchange_rates['CNY']/config.exchange_rates['USD'], 2)
+        eu = round(money * config.exchange_rates['CNY']/config.exchange_rates['EUR'], 2)
+        s = "🇨🇳" + str(money) + " CNY:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR"
     return s
 
