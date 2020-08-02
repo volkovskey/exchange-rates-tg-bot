@@ -119,7 +119,7 @@ async def main_void(message: types.Message):
             SnV=processing.search(mes_ar, p)
             print(SnV)
             if SnV != [[],[]]:
-                output=""
+                output = ""
                 i = 0
                 while i < len(SnV[0]):
                     print(i)
@@ -136,7 +136,6 @@ async def main_void(message: types.Message):
                 print(output)
         elif message.chat.type == "private":
             await message.reply("Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'.")
-    
     except:
         print("Error")
 

@@ -26,7 +26,9 @@ def update_exchange_rate():
         except:
             print("couldnt parse part of exchange rates")
     print(exchange_rates_temp)
+    
     return exchange_rates_temp.copy()
+
 
 token = '' #here your token
 creator_id = ["no"] #Here you need to enter the ID of the person / chat who will have access to statistics
@@ -46,3 +48,5 @@ ar_vault_s = [["uah"],
             ["plz", "pln", "зл",],
             ["byn", "бр",],
             ["cny", "rmb"]]
+cur_dict = {0:"UAH", 1:"RUB", 2:"USD", 3:"EUR", 4:"PLN", 5:"BYN", 6:"CNY"}
+flags_dict = {"UAH":"🇺🇦", "RUB":"🇷🇺", "USD":"🇺🇸", "EUR":"🇪🇺", "PLN":"🇵🇱", "BYN":"🇧🇾", "CNY":"🇨🇳"}

@@ -112,60 +112,25 @@ def search(a, m):
             suma.append(a[e - 1])
         i -= 1
     suma.reverse()
+    for i in range(len(m[1])):
+        m[1][i] = config.cur_dict[m[1][i]]
     answ_ar = [suma, m[1]]
     return answ_ar
 
-def output(a, i):
+def output(a, j):
     s=""
-    #print(config.exchange_rates)
-    money = float(a[0][i])
-    if a[1][i] == 1:
-        ua = round(money * (config.exchange_rates['RUB']), 2)
-        en = round(money * (config.exchange_rates['RUB']/config.exchange_rates['USD']), 2)
-        eu = round(money * (config.exchange_rates['RUB']/config.exchange_rates['EUR']), 2)
-        bl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['BYN']), 2)
-        pl = round(money * (config.exchange_rates['RUB']/config.exchange_rates['PLN']), 2)
-        s = "🇷🇺" + str(money) + " RUB:" + "\n" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif a[1][i] == 0:
-        ru = round(money * (1/config.exchange_rates['RUB']), 2)
-        en = round(money * (1/config.exchange_rates['USD']), 2)
-        eu = round(money * (1/config.exchange_rates['EUR']), 2)
-        bl = round(money * (1/config.exchange_rates['BYN']), 2)
-        pl = round(money * (1/config.exchange_rates['PLN']), 2)
-        s = "🇺🇦" + str(money) + " UAH:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif a[1][i] == 2:
-        ru = round(money * config.exchange_rates['USD']/config.exchange_rates['RUB'], 2)
-        ua = round(money * config.exchange_rates['USD'], 2)
-        eu = round(money * config.exchange_rates['USD']/config.exchange_rates['EUR'], 2)
-        pl = round(money * config.exchange_rates['USD']/config.exchange_rates['PLN'], 2)
-        bl = round(money * config.exchange_rates['USD']/config.exchange_rates['BYN'], 2)
-        s = "🇺🇸" + str(money) + " USD:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif a[1][i] == 3:
-        ru = round(money * config.exchange_rates['EUR']/config.exchange_rates['RUB'], 2)
-        ua = round(money * config.exchange_rates['EUR'], 2)
-        en = round(money * config.exchange_rates['EUR']/config.exchange_rates['USD'], 2)
-        pl = round(money * config.exchange_rates['EUR']/config.exchange_rates['PLN'], 2)
-        bl = round(money * config.exchange_rates['EUR']/config.exchange_rates['BYN'], 2)
-        s = "🇪🇺" + str(money) + " EUR:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif a[1][i] == 5:
-        ru = round(money * config.exchange_rates['BYN']/config.exchange_rates['RUB'], 2)
-        ua = round(money * config.exchange_rates['BYN'], 2)
-        en = round(money * config.exchange_rates['BYN']/config.exchange_rates['USD'], 2)
-        eu = round(money * config.exchange_rates['BYN']/config.exchange_rates['EUR'], 2)
-        pl = round(money * config.exchange_rates['BYN']/config.exchange_rates['PLN'], 2)
-        s = "🇧🇾" + str(money) + " BYN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇵🇱" + str(pl) + " PLN" + "\n"
-    elif a[1][i] == 4:
-        ru = round(money * config.exchange_rates['PLN']/config.exchange_rates['RUB'], 2)
-        ua = round(money * config.exchange_rates['PLN'], 2)
-        en = round(money * config.exchange_rates['PLN']/config.exchange_rates['USD'], 2)
-        eu = round(money * config.exchange_rates['PLN']/config.exchange_rates['EUR'], 2)
-        bl = round(money * config.exchange_rates['PLN']/config.exchange_rates['BYN'], 2)
-        s = "🇵🇱" + str(money) + " PLN:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR" + "\n" + "🇧🇾" + str(bl) + " BYN" + "\n"
-    elif a[1][i] == 6:
-        ru = round(money * config.exchange_rates['CNY']/config.exchange_rates['RUB'], 2)
-        ua = round(money * config.exchange_rates['CNY'], 2)
-        en = round(money * config.exchange_rates['CNY']/config.exchange_rates['USD'], 2)
-        eu = round(money * config.exchange_rates['CNY']/config.exchange_rates['EUR'], 2)
-        s = "🇨🇳" + str(money) + " CNY:" + "\n" + "\n" + "🇷🇺" + str(ru) + " RUB" + "\n" + "🇺🇦" + str(ua) + " UAH" + "\n"  + "🇺🇸" + str(en) + " USD" + "\n" + "🇪🇺" + str(eu) + " EUR"
+    money = float(a[0][j])
+    s = config.flags_dict[a[1][j]] + str(money) + " " + a[1][j] + "\n"
+    for i in config.cur_dict:
+        if config.cur_dict[i] == a[1][j]:
+            pass
+        elif config.cur_dict[i] == "UAH" and a[1][j] != "UAH":
+            ua = round(money * (config.exchange_rates[a[1][j]]), 2)
+            s = s + "\n" + config.flags_dict["UAH"] + str(ua) + " UAH"
+        elif a[1][j] != "UAH":
+            val = round(money * (config.exchange_rates[a[1][j]]/config.exchange_rates[config.cur_dict[i]]), 2)
+            s = s + "\n" + config.flags_dict[config.cur_dict[i]] + str(val) + " " + config.cur_dict[i]
+        else:
+            val = round(money * (1/config.exchange_rates[config.cur_dict[i]]), 2)
+            s = s + "\n" + config.flags_dict[config.cur_dict[i]] + str(val) + " " + config.cur_dict[i]
     return s
-
