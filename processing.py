@@ -3,7 +3,7 @@
 import config
 
 def special_split(s):
-    s = s.replace("\n", ",") #Replace hyphenation with comma
+    s = s.replace("\n", ", ") #Replace hyphenation with comma
 
     while s.find("  ") != -1: #Removing double spaces
         s = s.replace("  ", " ")

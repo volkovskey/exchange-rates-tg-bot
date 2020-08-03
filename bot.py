@@ -123,7 +123,7 @@ async def main_void(message: types.Message):
                 i = 0
                 while i < len(SnV[0]):
                     print(i)
-                    output=output+ "======" + "\n" + processing.output(SnV, i)
+                    output=output + "\n" + "======" + "\n" + processing.output(SnV, i)
                     i += 1
                 try:
                     if message.chat.type != "private":
