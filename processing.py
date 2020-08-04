@@ -56,7 +56,7 @@ def search_numbers_and_vaults(l):
     while i < len(config.ar_vault):
         while j < len(config.ar_vault[i]):
             for u in range(len(l)):
-                if l[u].find(config.ar_vault[i][j]) != -1:
+                if l[u].find(config.ar_vault[i][j]) == 0:
                     if u != len(l) - 1 and u != 0:
                         if l[u + 1][0].isdigit():
                             r.append(u)

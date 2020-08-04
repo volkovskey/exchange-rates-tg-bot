@@ -29,24 +29,25 @@ def update_exchange_rate():
     
     return exchange_rates_temp.copy()
 
-
 token = '' #here your token
 creator_id = ["no"] #Here you need to enter the ID of the person / chat who will have access to statistics
 
 # made global to avoid futher confusion
 ar_vault = [["грн", "гривн", "гривен", "₴"],
-            ["rur", "рубль", "рубл", "₽"],
+            ["rur", "рубл", "₽"],
             ["доллар", "бакс", "бачей", "зелен", "$"],
             ["евро", "€"],
-            ["злот"],
+            ["злот", "zł"],
             ["белрубл"],
-            ["юан", "жэньминьби"]]
+            ["юан", "жэньминьби"],
+            ["фунт", "£"]]
 ar_vault_s = [["uah"],
             ["rub", "руб", "р"],
             ["usd", "дол", "долл"],
             ["eur"],
             ["plz", "pln", "зл",],
             ["byn", "бр",],
-            ["cny", "rmb"]]
-cur_dict = {0:"UAH", 1:"RUB", 2:"USD", 3:"EUR", 4:"PLN", 5:"BYN", 6:"CNY"}
-flags_dict = {"UAH":"🇺🇦", "RUB":"🇷🇺", "USD":"🇺🇸", "EUR":"🇪🇺", "PLN":"🇵🇱", "BYN":"🇧🇾", "CNY":"🇨🇳"}
+            ["cny", "rmb"],
+            ["gbp"]]
+cur_dict = {0:"UAH", 1:"RUB", 2:"USD", 3:"EUR", 4:"PLN", 5:"BYN", 6:"CNY", 7:"GBP"}
+flags_dict = {"UAH":"🇺🇦", "RUB":"🇷🇺", "USD":"🇺🇸", "EUR":"🇪🇺", "PLN":"🇵🇱", "BYN":"🇧🇾", "CNY":"🇨🇳", "GBP":"🇬🇧"}

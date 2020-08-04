@@ -63,6 +63,25 @@ async def main_void(message: types.Message):
         answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
         await message.reply(answer)
 
+@dp.message_handler(commands=['files'])
+async def main_void(message: types.Message):
+    if str(message.chat.id) in config.creator_id:
+        backup_private = open('logs/id_private.ertb', 'rb')
+        backup_groups = open('logs/id_groups.ertb', 'rb')
+        backup_stats = open('logs/stats.csv', 'rb')
+        try:
+            await bot.send_document(message.chat.id, backup_private)
+        except:
+            await message.reply("Ошибка отправки. Файл пустой или не найден")
+        try:
+            await bot.send_document(message.chat.id, backup_groups)
+        except:
+            await message.reply("Ошибка отправки. Файл пустой или не найден")
+        try:
+            await bot.send_document(message.chat.id, backup_stats)
+        except:
+            await message.reply("Ошибка отправки. Файл пустой или не найден")
+
 @dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO or ContentType.VIDEO)
 async def main_void(message: types.Message):
     #Printing information about input message
@@ -148,7 +167,7 @@ async def cb_answer(call: types.CallbackQuery):
         print(call.from_user.id)
         member = await call.message.chat.get_member(call.from_user.id)
         print(member)
-        if member.status == "administrator": #Check for admin/creator
+        if member.status == "administrator" or member.status == "creator": #Check for admin/creator
             can_user_delete_message = True
         else:
             print("Access denied")
