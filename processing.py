@@ -117,20 +117,21 @@ def search(a, m):
     answ_ar = [suma, m[1]]
     return answ_ar
 
-def output(a, j):
+def output(a, j, settings):
     s=""
+    cur = a[1][j]
     money = float(a[0][j])
-    s = config.flags_dict[a[1][j]] + str(money) + " " + a[1][j] + "\n"
+    s = config.flags_dict[cur] + str(money) + " " + cur + "\n"
     for i in config.cur_dict:
-        if config.cur_dict[i] == a[1][j]:
+        if config.cur_dict[i] == cur:
             pass
-        elif config.cur_dict[i] == "UAH" and a[1][j] != "UAH":
-            ua = round(money * (config.exchange_rates[a[1][j]]), 2)
-            s = s + "\n" + config.flags_dict["UAH"] + str(ua) + " UAH"
-        elif a[1][j] != "UAH":
-            val = round(money * (config.exchange_rates[a[1][j]]/config.exchange_rates[config.cur_dict[i]]), 2)
+        elif config.cur_dict[i] == 'UAH' and cur != 'UAH' and settings['UAH']:
+            ua = round(money * (config.exchange_rates[cur]), 2)
+            s = s + "\n" + config.flags_dict['UAH'] + str(ua) + " UAH"
+        elif cur != 'UAH' and settings[config.cur_dict[i]]:
+            val = round(money * (config.exchange_rates[cur]/config.exchange_rates[config.cur_dict[i]]), 2)
             s = s + "\n" + config.flags_dict[config.cur_dict[i]] + str(val) + " " + config.cur_dict[i]
-        else:
+        elif settings[config.cur_dict[i]]:
             val = round(money * (1/config.exchange_rates[config.cur_dict[i]]), 2)
             s = s + "\n" + config.flags_dict[config.cur_dict[i]] + str(val) + " " + config.cur_dict[i]
     return s
