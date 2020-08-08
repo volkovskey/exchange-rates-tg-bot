@@ -29,11 +29,9 @@ def update_exchange_rate():
     
     return exchange_rates_temp.copy()
 
-#token = '' #here your token
-#creator_id = ["no"] #Here you need to enter the ID of the person / chat who will have access to statistics
+token = '' #here your token
+creator_id = ["no"] #Here you need to enter the ID of the person / chat who will have access to statistics
 
-creator_id = ["348826721", "361240585"]
-token = '1182364187:AAG7PjbZoOKikc0JTEI9MTaMAX2YEW432II'
 
 # made global to avoid futher confusion
 ar_vault = [["грн", "гривн", "гривен", "₴"],
