@@ -409,14 +409,14 @@ def assignment_of_settings():
     list_id = file_id.readlines()
     file_id.close()
     for i in list_id:
-        filename = i + ".ertb"
+        filename = i[0:len(i) - 2] + ".ertb"
         if filename in list_files:
-            settings = dbhelper.get_dict(i)
+            settings = dbhelper.get_dict(i[0:len(i) - 2])
             for j in config.cur_dict:
                 try:
                     a = settings[config.cur_dict[j]]
                 except:
-                    dbhelper.change_value(i, config.cur_dict[j], False)
+                    dbhelper.change_value(i[0:len(i) - 2], config.cur_dict[j], False)
         else:
             dbhelper.create_data(i, "private")
     
@@ -424,14 +424,14 @@ def assignment_of_settings():
     list_id = file_id.readlines()
     file_id.close()
     for i in list_id:
-        filename = i + ".ertb"
+        filename = i[0:len(i) - 2] + ".ertb"
         if filename in list_files:
-            settings = dbhelper.get_dict(i)
+            settings = dbhelper.get_dict(i[0:len(i) - 2])
             for j in config.cur_dict:
                 try:
                     a = settings[config.cur_dict[j]]
                 except:
-                    dbhelper.change_value(i, config.cur_dict[j], False)
+                    dbhelper.change_value(i[0:len(i) - 2], config.cur_dict[j], False)
         else:
             dbhelper.create_data(i, "group")
 
