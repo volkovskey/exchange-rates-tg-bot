@@ -115,9 +115,9 @@ async def main_void(message: types.Message):
         path = "reports/" + dt
         report = open(path, 'w')
         msg_text = message.reply_to_message.text
-        if message.reply_to_message.photo != []:
+        if message.photo or message.video is not None:
             msg_text = message.reply_to_message.caption
-        report.write(message.reply_to_message.text)
+        report.write(msg_text)
         report.close()
     except:
         await message.reply("Команду надо отправлять в ответ на сообщение, которое бот ошибочно распознал.")
@@ -148,11 +148,14 @@ async def main_void(message: types.Message):
             except:
                 print("Error delete")
 
-@dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO or ContentType.VIDEO)
+@dp.message_handler(content_types=ContentType.ANY)
 async def main_void(message: types.Message):
     msg_text = message.text
-    if message.photo != []:
+    if message.photo or message.video is not None:
         msg_text = message.caption
+
+    if msg_text is None or msg_text == "":
+        return
 
     #Printing information about input message
     print("")
