@@ -115,7 +115,7 @@ async def main_void(message: types.Message):
         path = "reports/" + dt
         report = open(path, 'w')
         msg_text = message.reply_to_message.text
-        if message.photo or message.video is not None:
+        if message.photo or message.video is not None or message.document is not None:
             msg_text = message.reply_to_message.caption
         report.write(msg_text)
         report.close()
@@ -151,7 +151,7 @@ async def main_void(message: types.Message):
 @dp.message_handler(content_types=ContentType.ANY)
 async def main_void(message: types.Message):
     msg_text = message.text
-    if message.photo or message.video is not None:
+    if message.photo or message.video is not None or message.document is not None:
         msg_text = message.caption
 
     if msg_text is None or msg_text == "":
