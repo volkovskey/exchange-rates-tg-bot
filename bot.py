@@ -114,7 +114,10 @@ async def main_void(message: types.Message):
         dt = today.strftime("%Y-%m-%d-%H.%M.%S")
         path = "reports/" + dt
         report = open(path, 'w')
-        report.write(message.reply_to_message.text)
+        msg_text = message.reply_to_message.text
+        if message.photo or message.video is not None or message.document is not None:
+            msg_text = message.reply_to_message.caption
+        report.write(msg_text)
         report.close()
     except:
         await message.reply("Команду надо отправлять в ответ на сообщение, которое бот ошибочно распознал.")
@@ -145,14 +148,21 @@ async def main_void(message: types.Message):
             except:
                 print("Error delete")
 
-@dp.message_handler(content_types=ContentType.TEXT or ContentType.PHOTO or ContentType.VIDEO)
+@dp.message_handler(content_types=ContentType.ANY)
 async def main_void(message: types.Message):
+    msg_text = message.text
+    if message.photo or message.video is not None or message.document is not None:
+        msg_text = message.caption
+
+    if msg_text is None or msg_text == "":
+        return
+
     #Printing information about input message
     print("")
     print("******************************")
     print("Username: " + str(message.from_user.username) + ", ID: " + str(message.chat.id)+ ", Chat: "+str(message.chat.title))
     print("")
-    print("Message: " + str(message.text))
+    print("Message: " + str(msg_text))
 
     #statistics
     try:
@@ -181,10 +191,8 @@ async def main_void(message: types.Message):
     except:
         print("Error stats")
     
-    mes = message.text
-    
     #To simplify processing, translate the message into lowercase
-    mes = mes.lower()
+    mes = msg_text.lower()
 
     #Splitting the text of the message into the necessary components
     mes_ar = processing.special_split(mes)
