@@ -243,7 +243,11 @@ async def cb_answer(call: types.CallbackQuery):
             if member.status == "administrator" or member.status == "creator": #Check for admin/creator
                 can_user_delete_message = True
             else:
-                print("Access denied")
+                settings = dbhelper.get_dict(str(call.from_user.id))
+                if settings["edit"] == "everybody":
+                    can_user_delete_message = True
+                else:
+                    print("Access denied")
         else:
             can_user_delete_message = True
         if can_user_delete_message:
