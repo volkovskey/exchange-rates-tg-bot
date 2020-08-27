@@ -11,6 +11,7 @@ import csv
 import time
 import datetime
 import os
+import random
 
 bot = Bot(token=config.token) #bot and its atributes declaration
 dp = Dispatcher(bot)
@@ -24,19 +25,37 @@ settings_markup.add(InlineKeyboardButton("Настройка валют", callba
 settings_markup.add(InlineKeyboardButton("Настройка прав", callback_data="edit"))
 settings_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
+private_markup = InlineKeyboardMarkup()
+private_markup.add(InlineKeyboardButton("Настройка валют", callback_data="cur"))
+#settings_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delete_button"))
+private_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+
 @dp.message_handler(commands=['echo'])
 async def main_void(message: types.Message):
     if str(message.chat.id) in config.creator_id:
         text = (message.text).replace("/echo ", "")
+        sent_msg = 0
         file_id = open("logs/id_private.ertb")
         list_id = file_id.readlines()
         for i in list_id:
-            await bot.send_message(i, text)
+            try:
+                await bot.send_message(i, text)
+                print("Sent "+str(sent_msg)+" messages")
+                sent_msg+=1
+            except:
+                print("An error occured while sending message")
+            time.sleep(random.choice([1,2,3]))
         file_id.close()
         file_id = open("logs/id_groups.ertb")
         list_id = file_id.readlines()
         for i in list_id:
-            await bot.send_message(i, text)
+            try:
+                await bot.send_message(i, text)
+                print("Sent "+str(sent_msg)+" messages")
+                sent_msg+=1
+            except:
+                print("An error occured while sending message")
+            time.sleep(random.choice([1,2,3]))
         file_id.close()
 
 @dp.message_handler(commands=['about'])
@@ -77,7 +96,7 @@ async def main_void(message: types.Message):
         if message.chat.type != "private":
             await message.reply("Выберите необходимый пункт настроек", reply_markup = settings_markup)
         else:
-            await message.reply("Настройки появятся в ближайшем будущем")
+            await message.reply("Выберите необходимый пункт настроек", reply_markup = private_markup)
 
 @dp.message_handler(commands=['stats'])
 async def main_void(message: types.Message):
@@ -107,12 +126,12 @@ async def main_void(message: types.Message):
                 answer = "Ошибка отправки. Файл " + i + " пустой или не найден." 
                 await message.reply(answer)
 
-@dp.message_handler(commands=['report'])
+@dp.message_handler(commands=['wrong'])
 async def main_void(message: types.Message):
     try:
         today = datetime.datetime.today()
         dt = today.strftime("%Y-%m-%d-%H.%M.%S")
-        path = "reports/" + dt
+        path = "reports/" + dt + ".txt"
         report = open(path, 'w')
         msg_text = message.reply_to_message.text
         if message.photo or message.video is not None or message.document is not None:
@@ -417,31 +436,31 @@ def assignment_of_settings():
     list_id = file_id.readlines()
     file_id.close()
     for i in list_id:
-        filename = i[0:len(i) - 2] + ".ertb"
+        filename = i[0:len(i) - 1] + ".ertb"
         if filename in list_files:
-            settings = dbhelper.get_dict(i[0:len(i) - 2])
+            settings = dbhelper.get_dict(i[0:len(i) - 1])
             for j in config.cur_dict:
                 try:
                     a = settings[config.cur_dict[j]]
                 except:
-                    dbhelper.change_value(i[0:len(i) - 2], config.cur_dict[j], False)
+                    dbhelper.change_value(i[0:len(i) - 1], config.cur_dict[j], False)
         else:
-            dbhelper.create_data(i, "private")
+            dbhelper.create_data(i[0:len(i) - 1], "private")
     
     file_id = open("logs/id_groups.ertb")
     list_id = file_id.readlines()
     file_id.close()
     for i in list_id:
-        filename = i[0:len(i) - 2] + ".ertb"
+        filename = i[0:len(i) - 1] + ".ertb"
         if filename in list_files:
-            settings = dbhelper.get_dict(i[0:len(i) - 2])
+            settings = dbhelper.get_dict(i[0:len(i) - 1])
             for j in config.cur_dict:
                 try:
                     a = settings[config.cur_dict[j]]
                 except:
-                    dbhelper.change_value(i[0:len(i) - 2], config.cur_dict[j], False)
+                    dbhelper.change_value(i[0:len(i) - 1], config.cur_dict[j], False)
         else:
-            dbhelper.create_data(i, "group")
+            dbhelper.create_data(i[0:len(i) - 1], "group")
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
