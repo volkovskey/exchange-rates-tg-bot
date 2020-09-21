@@ -36,11 +36,14 @@ def special_split(s):
     
     i = len(a) - 1
     while i > 0:
-        if a[i] == "к" and a[i - 1][0].isdigit(): #2.5к = 2500
+        if (a[i] == "к" or a[i] == "k") and a[i - 1][0].isdigit(): #2.5к = 2500
             a[i - 1] = str(float(a[i - 1]) * 1000)
             del a[i]
-        elif a[i] == "кк" and a[i - 1][0].isdigit(): #2.5кк = 2500000
+        elif (a[i] == "кк" or a[i] == "kk") and a[i - 1][0].isdigit(): #2.5кк = 2500000
             a[i - 1] = str(float(a[i - 1]) * 1000000)
+            del a[i]
+        elif (a[i] == "ккк" or a[i] == "kkk") and a[i - 1][0].isdigit(): #2.5ккк = 2500000000
+            a[i - 1] = str(float(a[i - 1]) * 1000000000)
             del a[i]
         i -= 1
     print("")

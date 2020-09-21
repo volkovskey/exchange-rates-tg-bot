@@ -3,6 +3,7 @@
 import config
 import processing
 import dbhelper
+import ertb_stats
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.message import ContentType
 from aiogram.types.inline_keyboard import InlineKeyboardMarkup, InlineKeyboardButton
@@ -12,6 +13,22 @@ import time
 import datetime
 import os
 import random
+import zipfile
+
+#убрать баги +
+#перенести статистику в отдельный файл +
+#добавить настройки удаления -
+#добавить статистику по включенным валютам -
+#добавить статистику по распознаванию -
+#добавить количество активных групп и личек
+#добавить автопостройку графиков -
+#добавить команду бэкап и сделять автоматический бэкап -
+
+#добавить перевод -
+#добавить крипту -
+#добавить inline функционал -
+
+#добавить донат -
 
 bot = Bot(token=config.token) #bot and its atributes declaration
 dp = Dispatcher(bot)
@@ -21,13 +38,13 @@ markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
 settings_markup = InlineKeyboardMarkup()
 settings_markup.add(InlineKeyboardButton("Настройка валют", callback_data="cur"))
-#settings_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delete_button"))
+settings_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delbut_"))
 settings_markup.add(InlineKeyboardButton("Настройка прав", callback_data="edit"))
 settings_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
 private_markup = InlineKeyboardMarkup()
 private_markup.add(InlineKeyboardButton("Настройка валют", callback_data="cur"))
-#settings_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delete_button"))
+private_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delbut_"))
 private_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
 @dp.message_handler(commands=['echo'])
@@ -60,24 +77,27 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['about'])
 async def main_void(message: types.Message):
+    ertb_stats.check_chat(message)
     about_file = open("texts/about.ertb")
     about_text = about_file.read()
-    if message.chat.type != "private":
+    if dbhelper.get_set(message.chat.id, "delete_button"):
         await message.reply(about_text, reply_markup = markup)
     else:
         await message.reply(about_text)
 
 @dp.message_handler(commands=['help'])
 async def main_void(message: types.Message):
+    ertb_stats.check_chat(message)
     help_file = open("texts/help.ertb")
     help_text = help_file.read()
-    if message.chat.type != "private":
+    if dbhelper.get_set(message.chat.id, "delete_button"):
         await message.reply(help_text, reply_markup = markup)
     else:
         await message.reply(help_text)
 
 @dp.message_handler(commands=['settings'])
 async def main_void(message: types.Message):
+    ertb_stats.check_chat(message)
     settings = dbhelper.get_dict(str(message.chat.id))
     can_user_edit_settings = False #It`s var shows whether a person can control the bot 
     if message.chat.all_members_are_administrators != True and message.chat.type != "private": #Checking for the type of chat administration: all admins, or specific people
@@ -128,10 +148,15 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['wrong'])
 async def main_void(message: types.Message):
+    ertb_stats.check_chat(message)
     try:
         today = datetime.datetime.today()
         dt = today.strftime("%Y-%m-%d-%H.%M.%S")
-        path = "reports/" + dt + ".txt"
+        try:
+            path = "reports/" + dt + ".txt"
+        except:
+            os.mkdir("reports")
+            path = "reports/" + dt + ".txt"
         report = open(path, 'w')
         msg_text = message.reply_to_message.text
         if message.photo or message.video is not None or message.document is not None:
@@ -139,21 +164,30 @@ async def main_void(message: types.Message):
         report.write(msg_text)
         report.close()
     except:
-        await message.reply("Команду надо отправлять в ответ на сообщение, которое бот ошибочно распознал.")
+        text = "Команду надо отправлять в ответ на сообщение, которое бот ошибочно распознал."
+        if dbhelper.get_set(message.chat.id, "delete_button"):
+            await message.reply(text, reply_markup = markup)
+        else:
+            await message.reply(text)
 
 @dp.message_handler(commands=['reports'])
 async def main_void(message: types.Message):
     if str(message.chat.id) in config.creator_id:
         directory = 'reports'
         list_files = os.listdir(directory)
+        zip_arch = zipfile.ZipFile('logs/reports.zip', 'w')
         for i in list_files:
-            path = directory + '/' + i
-            files = open(path, 'rb')
+            path = directory + "/" + i
             try:
-                await bot.send_document(message.chat.id, files)
+                zip_arch.write(path)
             except:
-                answer = "Ошибка отправки. Файл " + i + " пустой или не найден." 
-                await message.reply(answer)
+                answer = "Ошибка добавления. Файл " + i + " пустой или не найден." 
+                print(answer)
+        zip_arch.close()
+        path = "logs/reports.zip"
+        report_file = open(path, 'rb')
+        await bot.send_document(message.chat.id, report_file)
+        os.remove(path)
 
 @dp.message_handler(commands=['delete_reports'])
 async def main_void(message: types.Message):
@@ -166,6 +200,12 @@ async def main_void(message: types.Message):
                 os.remove(path)
             except:
                 print("Error delete")
+
+@dp.message_handler(commands=['start'])
+async def main_void(message: types.Message):
+    if message.chat.type == "private":
+        ertb_stats.check_chat(message)
+        await message.reply("Вы можете настроить валюты или начать пользоваться ботом", reply_markup = private_markup)
 
 @dp.message_handler(content_types=ContentType.ANY)
 async def main_void(message: types.Message):
@@ -184,31 +224,7 @@ async def main_void(message: types.Message):
     print("Message: " + str(msg_text))
 
     #statistics
-    try:
-        if message.chat.type == "private":
-            file_id = open("logs/id_private.ertb")
-        else:
-            file_id = open("logs/id_groups.ertb")
-        list_id = file_id.readlines()
-        for i in range(len(list_id) - 1):
-            list_id[i] = list_id[i][0:len(list_id[i]) - 1]
-        if str(message.chat.id) in list_id:
-            pass
-        else:
-            file_id.close()
-            if message.chat.type == "private":
-                file_id = open("logs/id_private.ertb", "w")
-            else:
-                file_id = open("logs/id_groups.ertb", "w")
-            for i in range(len(list_id)):
-                file_id.write(str(list_id[i]) + "\n")
-            file_id.write(str(message.chat.id))
-
-            #settings
-            dbhelper.create_data(str(message.chat.id), str(message.chat.type))
-        file_id.close()
-    except:
-        print("Error stats")
+    ertb_stats.check_chat(message)
     
     #To simplify processing, translate the message into lowercase
     mes = msg_text.lower()
@@ -217,7 +233,6 @@ async def main_void(message: types.Message):
     mes_ar = processing.special_split(mes)
     
     try:
-        #Checking for commands from the bot
         k = False
         for i in range(len(mes_ar)):
             if mes_ar[i][0].isdigit():
@@ -238,16 +253,17 @@ async def main_void(message: types.Message):
                     output=output + "\n" + "======" + "\n" + processing.output(SnV, i, dbhelper.get_dict(message.chat.id))
                     i += 1
                 try:
-                    if message.chat.type != "private":
-                        await message.reply(output,reply_markup = markup)
-                    else:
-                        await message.reply(output)
+                    await message.reply(output,reply_markup = markup)
                 except:
                     print("Error")
                 print("Answer: ")
                 print(output)
         elif message.chat.type == "private":
-            await message.reply("Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'.")
+            text = "Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'."
+            if dbhelper.get_set(message.chat.id, "delete_button"):
+                await message.reply(text, reply_markup = markup)
+            else:
+                await message.reply(text)
     except:
         print("Error")
 
@@ -255,11 +271,17 @@ async def main_void(message: types.Message):
 async def cb_answer(call: types.CallbackQuery):
     if call.data == "delete":
         can_user_delete_message = False #It`s var shows whether a person     can control the bot 
-        if call.message.chat.all_members_are_administrators == True:
+        settings = dbhelper.get_dict(call.message.chat.id)
+        rule_for_delete = settings["delete"]
+        if call.message.chat.all_members_are_administrators == True or call.message.chat.type == "private":
             can_user_delete_message = True
         elif call.message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
             member = await call.message.chat.get_member(call.from_user.id)
-            if member.status == "administrator" or member.status == "creator": #Check for admin/creator
+            if rule_for_delete == "creator" and member.status == "creator":
+                can_user_delete_message = True
+            elif rule_for_delete == "admins" and (member.status == "administrator" or member.status == "creator"): #Check for admin/creator
+                can_user_delete_message = True
+            elif rule_for_delete == "everybody":
                 can_user_delete_message = True
             else:
                 print("Access denied")
@@ -284,7 +306,7 @@ async def cb_answer(call: types.CallbackQuery):
                 mes_text += " ❌"
             call_data = "edit_" + i
             edit_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        edit_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+        edit_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
         await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=edit_markup)
     elif str(call.data).find("edit") == 0:
         settings = dbhelper.get_dict(call.message.chat.id)
@@ -305,7 +327,7 @@ async def cb_answer(call: types.CallbackQuery):
                     mes_text += " ❌"
                 call_data = "edit_" + i
                 edit_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-            edit_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+            edit_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
             await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=edit_markup)
     elif call.data == "cur":
         settings = dbhelper.get_dict(call.message.chat.id)
@@ -319,7 +341,7 @@ async def cb_answer(call: types.CallbackQuery):
                 mes_text += " ❌"
             call_data = "cur_" + i
             cur_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        cur_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+        cur_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
         await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=cur_markup)
 
     elif str(call.data).find("cur") == 0:
@@ -338,34 +360,8 @@ async def cb_answer(call: types.CallbackQuery):
                 mes_text += " ❌"
             call_data = "cur_" + i
             cur_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        cur_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+        cur_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
         await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=cur_markup)
-
-    elif call.data == "delete_button":
-        enru_dict = {"creator":"Создатель", "admins":"Администраторы", "sender":"Администраторы и отправитель", "everybody":"Все участники"}
-        settings = dbhelper.get_dict(call.message.chat.id)
-        text = "Настройте кнопку удаления. Выберите категорию людей, которые смогут удалять сообщения от бота:"
-        delete_markup = InlineKeyboardMarkup()
-
-        mes_text = "Кнопка 'Удалить'"
-        if settings["delete_button"]:
-            mes_text += " ✅"
-            call_data = "delbut_button"
-            delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-            for i in enru_dict:
-                mes_text = enru_dict[i]
-                if settings["delete"] == i:
-                    mes_text += " ✅"
-                else:
-                    mes_text += " ❌"
-                call_data = "delbut_" + i
-                delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        else:
-            mes_text += " ❌"
-            call_data = "delbut_button"
-            delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        delete_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
-        await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=delete_markup)
 
     elif str(call.data).find("delbut_") == 0:
         index = str(call.data).find("_") + 1
@@ -378,7 +374,8 @@ async def cb_answer(call: types.CallbackQuery):
             settings = dbhelper.get_dict(call.message.chat.id)
             dbhelper.change_value(call.message.chat.id, "delete", value)
             settings = dbhelper.get_dict(call.message.chat.id)
-        enru_dict = {"creator":"Создатель", "admins":"Администраторы", "sender":"Администраторы и отправитель", "everybody":"Все участники"}
+        #enru_dict = {"creator":"Создатель", "admins":"Администраторы", "sender":"Администраторы и отправитель", "everybody":"Все участники"}
+        enru_dict = {"creator":"Создатель", "admins":"Администраторы", "everybody":"Все участники"}
         settings = dbhelper.get_dict(call.message.chat.id)
         text = "Настройте кнопку удаления. Выберите категорию людей, которые смогут удалять сообщения от бота:"
         delete_markup = InlineKeyboardMarkup()
@@ -388,79 +385,74 @@ async def cb_answer(call: types.CallbackQuery):
             mes_text += " ✅"
             call_data = "delbut_button"
             delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-            for i in enru_dict:
-                mes_text = enru_dict[i]
-                if settings["delete"] == i:
-                    mes_text += " ✅"
-                else:
-                    mes_text += " ❌"
-                call_data = "delbut_" + i
-                delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
+            if call.message.chat.type != "private":
+                for i in enru_dict:
+                    mes_text = enru_dict[i]
+                    if settings["delete"] == i:
+                        mes_text += " ✅"
+                    else:
+                        mes_text += " ❌"
+                    call_data = "delbut_" + i
+                    delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
         else:
             mes_text += " ❌"
             call_data = "delbut_button"
             delete_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        delete_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+        delete_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
         await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=delete_markup)
 
-def bot_stats():
-    while True:
-        with open('logs/stats.csv') as f:
-            reader = csv.reader(f)
-            data_list = list(reader)
-        try:
-            file_id = open("logs/id_private.ertb")
-            list_id = file_id.readlines()
-            len_private = len(list_id)
-            file_id.close()
-            file_id = open("logs/id_groups.ertb")
-            list_id = file_id.readlines()
-            len_groups = len(list_id)
-            file_id.close()
-            now = datetime.datetime.now()
-            m=[str(now), len_private, len_groups]
-            data_list.append(m)
-            with open('logs/stats.csv', 'w') as f:
-                writer = csv.writer(f)
-                for row in data_list:
-                    writer.writerow(row)
-        except:
-            print("Error")
-        time.sleep(86400)
-        
+    elif call.data == "settings":
+        text = "Выберите необходимый пункт настроек"
+        if call.message.chat.type != "private":
+            await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=settings_markup)
+        else:
+            await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=private_markup)
+    
+
 def assignment_of_settings():
     directory = 'settings'
-    list_files = os.listdir(directory)
-
+    try:
+        list_files = os.listdir(directory)
+    except:
+        os.mkdir("settings")
+        list_files = os.listdir(directory)
+    
     file_id = open("logs/id_private.ertb")
     list_id = file_id.readlines()
     file_id.close()
-    for i in list_id:
-        filename = i[0:len(i) - 1] + ".ertb"
-        if filename in list_files:
-            settings = dbhelper.get_dict(i[0:len(i) - 1])
-            for j in config.cur_dict:
-                try:
-                    a = settings[config.cur_dict[j]]
-                except:
-                    dbhelper.change_value(i[0:len(i) - 1], config.cur_dict[j], False)
-        else:
-            dbhelper.create_data(i[0:len(i) - 1], "private")
-    
     file_id = open("logs/id_groups.ertb")
-    list_id = file_id.readlines()
+    list_id = list_id + file_id.readlines()
     file_id.close()
-    for i in list_id:
-        filename = i[0:len(i) - 1] + ".ertb"
+    for a in range(len(list_id)):
+        list_id[a] = list_id[a].replace("\n","")
+        i = list_id[a]
+        filename = i + ".ertb"
         if filename in list_files:
-            settings = dbhelper.get_dict(i[0:len(i) - 1])
+            settings = dbhelper.get_dict(i)
             for j in config.cur_dict:
                 try:
                     a = settings[config.cur_dict[j]]
                 except:
-                    dbhelper.change_value(i[0:len(i) - 1], config.cur_dict[j], False)
+                    dbhelper.change_value(i, config.cur_dict[j], False)
+            if filename[0] == "-":
+                file_with_default = open("logs/settings_groups.ertb")
+            else:
+                file_with_default = open("logs/settings_private.ertb")
+            default_settings = file_with_default.readlines()
+            for j in range(len(default_settings)):
+                default_settings[j] = default_settings[j].replace("\n", "")
+                index = default_settings[j].find(" ")
+                key = default_settings[j][0:index]
+                value = default_settings[j][index + 1:]
+                try:
+                    a = settings[key]
+                except:
+                    dbhelper.change_value(i, key, value)
         else:
-            dbhelper.create_data(i[0:len(i) - 1], "group")
+            if filename[0] == "-":
+                dbhelper.create_data(i, "group")
+            else:
+                dbhelper.create_data(i, "private")
 
 if __name__ == '__main__':
     #config.update_exchange_rate()
@@ -468,6 +460,6 @@ if __name__ == '__main__':
     thread_main.start()
     thread_exchange_rate = Thread(target=config.schedule_update)
     thread_exchange_rate.start()
-    thread_stats = Thread(target=bot_stats)
+    thread_stats = Thread(target=ertb_stats.bot_stats)
     thread_stats.start()
     assignment_of_settings()
