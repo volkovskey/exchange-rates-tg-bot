@@ -18,11 +18,9 @@ import zipfile
 #убрать баги +
 #перенести статистику в отдельный файл +
 #добавить настройки удаления +
-#добавить статистику по включенным валютам -
-#добавить статистику по распознаванию -
-#добавить количество активных групп и личек
+#добавить количество активных групп и личек -
 #добавить автопостройку графиков -
-#добавить команду бэкап и сделять автоматический бэкап -
+#сделать автоматический бэкап -
 
 #добавить перевод -
 #добавить крипту -
@@ -121,16 +119,52 @@ async def main_void(message: types.Message):
 @dp.message_handler(commands=['stats'])
 async def main_void(message: types.Message):
     if str(message.chat.id) in config.creator_id:
+        #Количество чатов
+        answer = "ЛС: " + str(ertb_stats.chat_count("private")) + "\n" + "Группы: " + str(ertb_stats.chat_count("groups"))
+        await message.reply(answer)
+        
+        #статистика по включенным валютам
+        cur_count_array = []
+        for i in config.cur_dict:
+            cur_count_array.append(config.cur_dict[i])
+        cur_count = dict.fromkeys(cur_count_array, 0)
+        cur_count_groups = dict.fromkeys(cur_count_array, 0)
+        cur_count_private = dict.fromkeys(cur_count_array, 0)
+        
+
         file_id = open("logs/id_private.ertb")
         list_id = file_id.readlines()
-        len_private = len(list_id)
         file_id.close()
         file_id = open("logs/id_groups.ertb")
-        list_id = file_id.readlines()
-        len_groups = len(list_id)
+        list_id = list_id + file_id.readlines()
         file_id.close()
-        answer = "ЛС: " + str(len_private) + "\n" + "Группы: " + str(len_groups)
+        for a in range(len(list_id)):
+            list_id[a] = list_id[a].replace("\n","")
+            i = list_id[a]
+            set_dict = dbhelper.get_dict(i)
+            for j in cur_count:
+                if set_dict[j]:
+                    cur_count[j] += 1
+                    if i[0] == "-":
+                        cur_count_groups[j] += 1
+                    else:
+                        cur_count_private[j] += 1
+        
+        answer = "Все чаты\n"
+        for i in cur_count:
+            answer += str(i) + ": " + str(cur_count[i]) + "\n"
         await message.reply(answer)
+
+        answer = "Групповые чаты\n"
+        for i in cur_count:
+            answer += str(i) + ": " + str(cur_count_groups[i]) + "\n"
+        await message.reply(answer)
+
+        answer = "Личные чаты\n"
+        for i in cur_count:
+            answer += str(i) + ": " + str(cur_count_private[i]) + "\n"
+        await message.reply(answer)
+        
 
 @dp.message_handler(commands=['logs'])
 async def main_void(message: types.Message):
@@ -169,6 +203,35 @@ async def main_void(message: types.Message):
             await message.reply(text, reply_markup = markup)
         else:
             await message.reply(text)
+
+@dp.message_handler(commands=['backup'])
+async def main_void(message: types.Message):
+    if str(message.chat.id) in config.creator_id:
+        zip_arch = zipfile.ZipFile('backup.zip', 'w')
+
+        directory = 'logs'
+        list_files = os.listdir(directory)
+        for i in list_files:
+            path = directory + "/" + i
+            try:
+                zip_arch.write(path)
+            except:
+                answer = "Ошибка добавления. Файл " + i + " пустой или не найден." 
+                print(answer)
+        directory = 'settings'
+        list_files = os.listdir(directory)
+        for i in list_files:
+            path = directory + "/" + i
+            try:
+                zip_arch.write(path)
+            except:
+                answer = "Ошибка добавления. Файл " + i + " пустой или не найден." 
+                print(answer)
+        zip_arch.close()
+        path = "backup.zip"
+        report_file = open(path, 'rb')
+        await bot.send_document(message.chat.id, report_file)
+        os.remove(path)
 
 @dp.message_handler(commands=['reports'])
 async def main_void(message: types.Message):
@@ -250,6 +313,7 @@ async def main_void(message: types.Message):
                 i = 0
                 while i < len(SnV[0]):
                     print(i)
+                    ertb_stats.update_rec_logs(SnV[1][i], str(message.chat.type))
                     output=output + "\n" + "======" + "\n" + processing.output(SnV, i, dbhelper.get_dict(message.chat.id))
                     i += 1
                 try:
