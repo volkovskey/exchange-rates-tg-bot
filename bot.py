@@ -4,6 +4,7 @@ import config
 import processing
 import dbhelper
 import ertb_stats
+import asyncio
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.message import ContentType
 from aiogram.types.inline_keyboard import InlineKeyboardMarkup, InlineKeyboardButton
@@ -14,6 +15,7 @@ import datetime
 import os
 import random
 import zipfile
+import sys
 
 #убрать баги +
 #перенести статистику в отдельный файл +
@@ -31,12 +33,19 @@ import zipfile
 bot = Bot(token=config.token) #bot and its atributes declaration
 dp = Dispatcher(bot)
 
+bl = []
+logs100 = []
+consoleLog = False
+
 markup = InlineKeyboardMarkup()
 markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
+donate = InlineKeyboardMarkup()
+donate.add(InlineKeyboardButton("Поддержать", url="https://secure.wayforpay.com/payment/s3641f64becae", callback_data="donate"))
+
 settings_markup = InlineKeyboardMarkup()
 settings_markup.add(InlineKeyboardButton("Настройка валют", callback_data="cur"))
-settings_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delbut_"))
+settings_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delbut_set"))
 settings_markup.add(InlineKeyboardButton("Настройка прав", callback_data="edit"))
 settings_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
 
@@ -44,6 +53,42 @@ private_markup = InlineKeyboardMarkup()
 private_markup.add(InlineKeyboardButton("Настройка валют", callback_data="cur"))
 private_markup.add(InlineKeyboardButton("Настройка кнопки удаления", callback_data="delbut_"))
 private_markup.add(InlineKeyboardButton("Удалить", callback_data="delete"))
+
+@dp.message_handler(commands=['donate'])
+async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
+    ertb_stats.check_chat(message)
+    donate_file = open("texts/donate.ertb")
+    donate_text = donate_file.read()
+    await message.reply(donate_text, reply_markup = donate)
+
+@dp.message_handler(commands=['source'])
+async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
+    ertb_stats.check_chat(message)
+    source_file = open("texts/source.ertb")
+    source_text = source_file.read()
+    await message.reply(source_text, reply_markup = markup)
+
+@dp.message_handler(commands=['count'])
+async def main_void(message: types.Message):
+    if str(message.chat.id) in config.creator_id:
+        sum_members = 0
+        file_id = open("logs/id_groups.ertb")
+        list_id = file_id.readlines()
+        for i in range(len(list_id) - 1):
+            list_id[i] = list_id[i][0:len(list_id[i]) - 1]
+        for i in list_id:
+            try:
+                sum_members = sum_members + await bot.get_chat_members_count(i)
+                print("Summary "+str(sum_members))
+            except:
+                print("Error count")
+            time.sleep(random.choice([1,2,3]))
+        file_id.close()
+        await message.reply("Количество участников чатов: " + str(sum_members))
 
 @dp.message_handler(commands=['echo'])
 async def main_void(message: types.Message):
@@ -54,7 +99,7 @@ async def main_void(message: types.Message):
         list_id = file_id.readlines()
         for i in list_id:
             try:
-                await bot.send_message(i, text)
+                await bot.send_message(i, text, reply_markup = donate)
                 print("Sent "+str(sent_msg)+" messages")
                 sent_msg+=1
             except:
@@ -65,9 +110,9 @@ async def main_void(message: types.Message):
         list_id = file_id.readlines()
         for i in list_id:
             try:
-                await bot.send_message(i, text)
+                await bot.send_message(i, text, reply_markup = donate)
                 print("Sent "+str(sent_msg)+" messages")
-                sent_msg+=1
+                sent_msg += 1
             except:
                 print("An error occured while sending message")
             time.sleep(random.choice([1,2,3]))
@@ -75,6 +120,8 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['about'])
 async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
     ertb_stats.check_chat(message)
     about_file = open("texts/about.ertb")
     about_text = about_file.read()
@@ -85,6 +132,8 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['help'])
 async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
     ertb_stats.check_chat(message)
     help_file = open("texts/help.ertb")
     help_text = help_file.read()
@@ -95,6 +144,8 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['settings'])
 async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
     ertb_stats.check_chat(message)
     settings = dbhelper.get_dict(str(message.chat.id))
     can_user_edit_settings = False #It`s var shows whether a person can control the bot 
@@ -182,6 +233,8 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['wrong'])
 async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
     ertb_stats.check_chat(message)
     try:
         today = datetime.datetime.today()
@@ -266,81 +319,109 @@ async def main_void(message: types.Message):
 
 @dp.message_handler(commands=['start'])
 async def main_void(message: types.Message):
+    if str(message.from_user.id) in bl:
+        return
     if message.chat.type == "private":
         ertb_stats.check_chat(message)
         await message.reply("Вы можете настроить валюты или начать пользоваться ботом", reply_markup = private_markup)
 
 @dp.message_handler(content_types=ContentType.ANY)
 async def main_void(message: types.Message):
-    msg_text = message.text
+    global bl
+    if str(message.from_user.id) in bl:
+        mes_text = ""
+    else:
+        msg_text = message.text
+
+    
     if message.photo or message.video is not None or message.document is not None:
         msg_text = message.caption
 
     if msg_text is None or msg_text == "":
         return
 
-    #Printing information about input message
-    print("")
-    print("******************************")
-    print("Username: " + str(message.from_user.username) + ", ID: " + str(message.chat.id)+ ", Chat: "+str(message.chat.title))
-    print("")
-    print("Message: " + str(msg_text))
-
+    if consoleLog:
+        #Printing information about input message
+        print("")
+        print("******************************")
+        print("Username: " + str(message.from_user.username) + ", ID: " + str(message.chat.id)+ ", Chat: "+str(message.chat.title))
+        print("")
+        print("Message: " + str(msg_text))
+    
     #statistics
     ertb_stats.check_chat(message)
+
+    #Check digit
+    if not any(map(str.isdigit, msg_text)):
+        return
     
     #To simplify processing, translate the message into lowercase
     mes = msg_text.lower()
 
     #Splitting the text of the message into the necessary components
     mes_ar = processing.special_split(mes)
+    if consoleLog:
+        print("Result array:")
+        print(mes_ar)
     
     try:
-        k = False
-        for i in range(len(mes_ar)):
-            if mes_ar[i][0].isdigit():
-                k = True
-                break
-        if k:
-            p = processing.search_numbers_and_vaults(mes_ar)
-        else:
-            p = [[],[]]
+        p = processing.search_numbers_and_vaults(mes_ar)
+        if consoleLog:
+            print(p)
         if p != [[],[]]:
-            SnV=processing.search(mes_ar, p)
-            print(SnV)
-            if SnV != [[],[]]:
-                output = ""
-                i = 0
-                while i < len(SnV[0]):
-                    print(i)
-                    ertb_stats.update_rec_logs(SnV[1][i], str(message.chat.type))
-                    output=output + "\n" + "======" + "\n" + processing.output(SnV, i, dbhelper.get_dict(message.chat.id))
-                    i += 1
-                try:
-                    await message.reply(output,reply_markup = markup)
-                except:
-                    print("Error")
+            global logs100
+            if len(logs100) >= 100:
+                logs100.pop(0)
+            logs100.append([str(message.from_user.id), len(p[0]), int(time.time())])
+
+            kol100 = 0
+            for i in range(len(logs100)):
+                if str(logs100[i][0]) == str(message.from_user.id):
+                    kol100 += logs100[i][1]
+            if kol100 >= 50:
+                index100 = 0
+                for i in range(len(logs100)):
+                    if str(logs100[i][0]) == str(message.from_user.id):
+                        index100 = i       
+
+                if logs100[len(logs100) - 1][2] - logs100[index100][2] <= 120:
+                    print(bl)
+                    bl.append(str(message.from_user.id))
+                    black_list_update()
+                    await message.reply("Здравствуйте, вы были заблокированы во избежания большой нагрузки на сервер. Если это произошло случайно, пожалуйста, напишите моим создателям: @volkovskey, @vladikko")
+            ###
+            output = ""
+            i = 0
+            while i < len(p[0]):
+                output=output + "\n" + "======" + "\n" + processing.output(p, i, dbhelper.get_dict(message.chat.id))
+                i += 1
+            try:
+                if dbhelper.get_set(message.chat.id, "delete_button"):
+                    await message.reply(output, parse_mode= 'HTML', reply_markup = markup)
+                else:
+                    await message.reply(output)
+            except:
+                print("Error")
+            if consoleLog:
                 print("Answer: ")
                 print(output)
         elif message.chat.type == "private":
             text = "Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'."
-            if dbhelper.get_set(message.chat.id, "delete_button"):
-                await message.reply(text, reply_markup = markup)
-            else:
-                await message.reply(text)
     except:
         print("Error")
 
 @dp.callback_query_handler(lambda call: True)
 async def cb_answer(call: types.CallbackQuery):
+    if str(call.from_user.id) in bl:
+        return
     if call.data == "delete":
         can_user_delete_message = False #It`s var shows whether a person     can control the bot 
         settings = dbhelper.get_dict(call.message.chat.id)
-        rule_for_delete = settings["delete"]
         if call.message.chat.all_members_are_administrators == True or call.message.chat.type == "private":
             can_user_delete_message = True
         elif call.message.chat.all_members_are_administrators != True: #Checking for the type of chat administration: all admins, or specific people
             member = await call.message.chat.get_member(call.from_user.id)
+            rule_for_delete = settings["delete"]
             if rule_for_delete == "creator" and member.status == "creator":
                 can_user_delete_message = True
             elif rule_for_delete == "admins" and (member.status == "administrator" or member.status == "creator"): #Check for admin/creator
@@ -353,9 +434,10 @@ async def cb_answer(call: types.CallbackQuery):
             can_user_delete_message = True
         if can_user_delete_message:
             try:
+                await bot.edit_message_text(call.message.text + "\n\n@" + str(call.from_user.username) + " (id: " + str(call.from_user.id) + ")" +" удалил это сообщение.", call.message.chat.id, call.message.message_id)
                 await call.message.delete()
             except:
-                print("Error")
+                print("Error delete")
     elif call.data == "edit":
         enru_dict = {"creator":"Создатель", "admins":"Администраторы", "everybody":"Все участники"}
         settings = dbhelper.get_dict(call.message.chat.id)
@@ -382,7 +464,6 @@ async def cb_answer(call: types.CallbackQuery):
             settings = dbhelper.get_dict(call.message.chat.id)
             text = "Выберите категорию людей, которые смогут изменять настройки бота:"
             edit_markup = InlineKeyboardMarkup()
-
             for i in enru_dict:
                 mes_text = enru_dict[i]
                 if settings["edit"] == i:
@@ -393,36 +474,23 @@ async def cb_answer(call: types.CallbackQuery):
                 edit_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
             edit_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
             await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=edit_markup)
-    elif call.data == "cur":
-        settings = dbhelper.get_dict(call.message.chat.id)
-        text = "Настройте валюту для перевода."
-        cur_markup = InlineKeyboardMarkup()
-        for i in config.flags_dict:
-            mes_text = config.flags_dict[i] + i
-            if settings[i]:
-                mes_text += " ✅"
-            else:
-                mes_text += " ❌"
-            call_data = "cur_" + i
-            cur_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
-        cur_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
-        await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=cur_markup)
 
     elif str(call.data).find("cur") == 0:
-        index = str(call.data).find("_") + 1
-        key = str(call.data)[index:len(str(call.data))]
-        settings = dbhelper.get_dict(call.message.chat.id)
-        dbhelper.change_value(call.message.chat.id, key, not settings[key])
+        if len(str(call.data)) > 3:
+            index = str(call.data).find("_") + 1
+            key = str(call.data)[index:len(str(call.data))]
+            settings = dbhelper.get_dict(call.message.chat.id)
+            dbhelper.change_value(call.message.chat.id, key, not settings[key])
         settings = dbhelper.get_dict(call.message.chat.id)
         text = "Настройте валюту для перевода."
         cur_markup = InlineKeyboardMarkup()
-        for i in config.flags_dict:
-            mes_text = config.flags_dict[i] + i
-            if settings[i]:
+        for i in range(len(config.cur_dict[0])):
+            mes_text = config.cur_dict[1][i] + config.cur_dict[0][i]
+            if settings[config.cur_dict[0][i]]:
                 mes_text += " ✅"
             else:
                 mes_text += " ❌"
-            call_data = "cur_" + i
+            call_data = "cur_" + config.cur_dict[0][i]
             cur_markup.add(InlineKeyboardButton(mes_text, callback_data=call_data))
         cur_markup.add(InlineKeyboardButton("Назад", callback_data="settings"))
         await bot.edit_message_text(text, call.message.chat.id, call.message.message_id, reply_markup=cur_markup)
@@ -434,6 +502,8 @@ async def cb_answer(call: types.CallbackQuery):
             settings = dbhelper.get_dict(call.message.chat.id)
             dbhelper.change_value(call.message.chat.id, "delete_button", not settings["delete_button"])
             settings = dbhelper.get_dict(call.message.chat.id)
+        elif value == "set":
+            pass
         else:
             settings = dbhelper.get_dict(call.message.chat.id)
             dbhelper.change_value(call.message.chat.id, "delete", value)
@@ -493,11 +563,11 @@ def assignment_of_settings():
         filename = i + ".ertb"
         if filename in list_files:
             settings = dbhelper.get_dict(i)
-            for j in config.cur_dict:
+            for j in config.cur_dict[0]:
                 try:
-                    a = settings[config.cur_dict[j]]
+                    a = settings[j]
                 except:
-                    dbhelper.change_value(i, config.cur_dict[j], False)
+                    dbhelper.change_value(i, j, False)
             if filename[0] == "-":
                 file_with_default = open("logs/settings_groups.ertb")
             else:
@@ -518,12 +588,39 @@ def assignment_of_settings():
             else:
                 dbhelper.create_data(i, "private")
 
+def black_list():
+    file_bl = open("logs/black_list.ertb")
+    global bl
+    bl=file_bl.readlines()
+    for a in range(len(bl)):
+        bl[a] = bl[a].replace("\n","")
+    file_bl.close()
+
+def black_list_update():
+    global bl
+    file_bl = open("logs/black_list.ertb", "w")
+    for i in bl:
+        file_bl.write(i + "\n")
+    file_bl.close()
+    
 if __name__ == '__main__':
-    #config.update_exchange_rate()
-    thread_main = Thread(target=executor.start_polling, args=(dp,))
-    thread_main.start()
+    if len(sys.argv) > 1:
+        param_name = sys.argv[1]
+        param_value = sys.argv[2]
+        if (param_name == "--logs" or param_name == "-l"):
+            if param_value == "on":
+                consoleLog = True
+            elif param_value == "off":
+                consoleLog = False
+        else:
+            print ("Error. Unknow parametr '{}'".format (param_name) )
+            sys.exit(1)
+    else:
+        pass
     thread_exchange_rate = Thread(target=config.schedule_update)
     thread_exchange_rate.start()
     thread_stats = Thread(target=ertb_stats.bot_stats)
     thread_stats.start()
     assignment_of_settings()
+    black_list()
+    executor.start_polling(dp, skip_updates=True)

@@ -46,9 +46,6 @@ def special_split(s):
             a[i - 1] = str(float(a[i - 1]) * 1000000000)
             del a[i]
         i -= 1
-    print("")
-    print("Result array:")
-    print(a)
     return a
 
 def search_numbers_and_vaults(l):
@@ -73,6 +70,9 @@ def search_numbers_and_vaults(l):
                     elif u == 0 and l[u + 1][0].isdigit():
                         r.append(u)
                         t.append(i)
+
+                if len(r)>=50:
+                    return [[],[]]
             j += 1
         i += 1
         j = 0
@@ -95,12 +95,26 @@ def search_numbers_and_vaults(l):
                     elif u == 0 and l[u + 1][0].isdigit():
                         r.append(u)
                         t.append(i)
+                if len(r)>=50:
+                    return [[],[]]
             j += 1
         i += 1
         j = 0
-    m = [r, t]
-    print(m)
-    return m
+    
+    suma = []
+    i = len(r) - 1
+    while i >= 0:
+        e = r[i]
+        if e == len(l) - 1 and l[len(l) - 2][0].isdigit():
+            suma.append(l[e - 1])
+        elif l[e + 1][0].isdigit():
+            suma.append(l[e + 1])
+        elif l[e - 1][0].isdigit():
+            suma.append(l[e - 1])
+        i -= 1
+    suma.reverse()
+    answ_ar = [suma, t]
+    return answ_ar
 
 def search(a, m):
     suma = []
@@ -116,7 +130,7 @@ def search(a, m):
         i -= 1
     suma.reverse()
     for i in range(len(m[1])):
-        m[1][i] = config.cur_dict[m[1][i]]
+        m[1][i] = config.cur_dict[0][m[1][i]]
     answ_ar = [suma, m[1]]
     return answ_ar
 
@@ -124,17 +138,29 @@ def output(a, j, settings):
     s=""
     cur = a[1][j]
     money = float(a[0][j])
-    s = config.flags_dict[cur] + str(money) + " " + cur + "\n"
-    for i in config.cur_dict:
-        if config.cur_dict[i] == cur:
+    s = config.cur_dict[1][cur] + str(money) + " " + config.cur_dict[0][cur] + "\n"
+    for i in range(len(config.cur_dict[0])):
+        if config.cur_dict[0][i] == config.cur_dict[0][cur]:
             pass
-        elif config.cur_dict[i] == 'UAH' and cur != 'UAH' and settings['UAH']:
-            ua = round(money * (config.exchange_rates[cur]), 2)
-            s = s + "\n" + config.flags_dict['UAH'] + str(ua) + " UAH"
-        elif cur != 'UAH' and settings[config.cur_dict[i]]:
-            val = round(money * (config.exchange_rates[cur]/config.exchange_rates[config.cur_dict[i]]), 2)
-            s = s + "\n" + config.flags_dict[config.cur_dict[i]] + str(val) + " " + config.cur_dict[i]
-        elif settings[config.cur_dict[i]]:
-            val = round(money * (1/config.exchange_rates[config.cur_dict[i]]), 2)
-            s = s + "\n" + config.flags_dict[config.cur_dict[i]] + str(val) + " " + config.cur_dict[i]
+        elif config.cur_dict[0][i] == 'UAH' and config.cur_dict[0][cur] != 'UAH' and settings['UAH']:
+            ua = round(money * (config.exchange_rates[config.cur_dict[0][cur]]), 2)
+            s = s + "\n" + config.cur_dict[1][i] + str(ua) + " UAH"
+        elif config.cur_dict[0][cur] != 'UAH' and settings[config.cur_dict[0][i]]:
+            val = round(money * (config.exchange_rates[config.cur_dict[0][cur]]/config.exchange_rates[config.cur_dict[0][i]]), 2)
+            s = s + "\n" + config.cur_dict[1][i] + str(val) + " " + config.cur_dict[0][i]
+        elif settings[config.cur_dict[0][i]]:
+            val = round(money * (1/config.exchange_rates[config.cur_dict[0][i]]), 2)
+            s = s + "\n" + config.cur_dict[1][i] + str(val) + " " + config.cur_dict[0][i]
+    if config.cur_dict[0][cur] == 'UAH' and money == 40.0:
+        s += "\n👖1 штаны"
+    elif config.cur_dict[0][cur] == 'USD' and money == 22062012.0:
+        s += "\n"
+        s += "<code>_________ _______  _______  _        _______ " + "\n"
+        s += "\__   __/(  ____ \(  ____ \( \      (  ___  )" + "\n"
+        s += "   ) (   | (    \/| (    \/| (      | (   ) |" + "\n"
+        s += "   | |   | (__    | (_____ | |      | (___) |" + "\n"
+        s += "   | |   |  __)   (_____  )| |      |  ___  |" + "\n"
+        s += "   | |   | (            ) || |      | (   ) |" + "\n"
+        s += "   | |   | (____/\/\____) || (____/\| )   ( |" + "\n"
+        s += "   )_(   (_______/\_______)(_______/|/     \|</code>" + "\n"
     return s

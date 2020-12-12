@@ -52,46 +52,6 @@ def bot_stats():
                 writer = csv.writer(f)
                 for row in new_data_list:
                     writer.writerow(row)
-            
-            #записываем количество распознаваний за предыдущие сутки
-            now = datetime.now()
-            yesterday = str(now - timedelta(days=1))
-            index = yesterday.find(" ")
-            yesterday = yesterday[0:index]
-            kol=0
-
-            with open('logs/rec_logs.csv') as f:
-                reader = csv.reader(f)
-                data_list = list(reader)
-            k = True
-            i = len(data_list) - 1
-            while k:
-                index = str(data_list[i]).find(" ")
-                date = str(data_list[i][0][0:10])
-                if date == yesterday:
-                    i -= 1
-                    kol += 1
-                else:
-                    k = False
-
-            with open('logs/rec_stats.csv') as f:
-                reader = csv.reader(f)
-                rec_stats = list(reader)
-            m=[yesterday, kol]
-            rec_stats.append(m)
-            new_data_list = []
-            for i in range(len(rec_stats) - 1):
-                if len(rec_stats) == 1:
-                    new_data_list.append(rec_stats[i])
-                elif str(rec_stats[i][0])[0:10] != str(rec_stats[i + 1][0])[0:10]:
-                    new_data_list.append(rec_stats[i])
-            new_data_list.append(rec_stats[len(rec_stats) - 1])
-            print(new_data_list)
-            with open('logs/rec_stats.csv', 'w') as f:
-                writer = csv.writer(f)
-                for row in new_data_list:
-                    writer.writerow(row)
-
         except:
             print("Error")
         time.sleep(86400)
@@ -111,32 +71,3 @@ def chat_count(type_of_chats):
         file_id.close()
         answer += len_groups
     return answer
-
-def update_rec_logs(cur, chat_type):
-    if chat_type == "private":
-        with open('logs/rec_logs_private.csv') as f:
-            reader = csv.reader(f)
-            data_list = list(reader)
-    else:
-        with open('logs/rec_logs_groupe.csv') as f:
-            reader = csv.reader(f)
-            data_list = list(reader)
-    
-    now = datetime.now()
-    m=[str(now), cur, chat_type]
-    data_list.append(m)
-    with open('logs/rec_logs.csv', 'w') as f:
-        writer = csv.writer(f)
-        for row in data_list:
-            writer.writerow(row)
-    
-    if chat_type == "private":
-        with open('logs/rec_logs_private.csv', 'w') as f:
-            writer = csv.writer(f)
-            for row in data_list:
-                writer.writerow(row)
-    else:
-        with open('logs/rec_logs_group.csv', 'w') as f:
-            writer = csv.writer(f)
-            for row in data_list:
-                writer.writerow(row)

@@ -7,8 +7,8 @@ def create_data(chat_id, chat_type):
     path = "settings/" + str(chat_id) + ".ertb"
 
     currency = []
-    for i in config.cur_dict:
-        currency.append(config.cur_dict[i])
+    for i in config.cur_dict[0]:
+        currency.append(i)
     settings = dict.fromkeys(currency, False)
     for i in default_cur:
         settings[i] = True
@@ -36,6 +36,8 @@ def change_value(chat_id, key, new_value):
     settings = eval(file_dict.read())
     try:
         settings[key] = new_value
+        print(new_value)
+        print(settings)
         file_dict.close()
         file_dict = open(path, "w")
         file_dict.write(str(settings))
