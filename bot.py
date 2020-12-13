@@ -380,6 +380,7 @@ async def main_void(message: types.Message):
         return
     
     #To simplify processing, translate the message into lowercase
+    msg_text += ", " + config.fix_layout(msg_text)
     mes = msg_text.lower()
 
     #Splitting the text of the message into the necessary components
@@ -413,6 +414,7 @@ async def main_void(message: types.Message):
                     bl.append(str(message.from_user.id))
                     black_list_update()
                     await message.reply("Здравствуйте, вы были заблокированы во избежания большой нагрузки на сервер. Если это произошло случайно, пожалуйста, напишите моим создателям: @volkovskey, @vladikko")
+            p = processing.delete_repeat(p)
             ###
             output = ""
             i = 0

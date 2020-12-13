@@ -68,3 +68,15 @@ ar_vault_s = [["azn"],
             ["uzs", "сум"]]
 cur_dict = [['AZN', 'BYN', 'CHF', 'CNY', 'CZK', 'EUR', 'GBP', 'GEL', 'ILS', 'INR', 'KRW', 'KZT', 'RUB', 'PLN', 'UAH', 'USD', 'UZS'],
             ["🇦🇿", "🇧🇾", "🇨🇭", "🇨🇳", "🇨🇿", "🇪🇺", "🇬🇧", "🇬🇪", "🇮🇱", "🇮🇳", "🇰🇷", "🇰🇿", "🇷🇺", "🇵🇱", "🇺🇦", "🇺🇸", "🇺🇿"]]
+_eng_chars = u"~!@#$%^&qwertyuiop[]asdfghjkl;'zxcvbnm,./QWERTYUIOP{}ASDFGHJKL:\"|ZXCVBNM<>?"
+_rus_chars = u"ё!\"№;%:?йцукенгшщзхъфывапролджэячсмитьбю.ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭ/ЯЧСМИТЬБЮ,"
+ 
+def fix_layout(s):
+    for i in range(len(s)):
+        if s[i] in _eng_chars:
+            index = _eng_chars.find(s[i])
+            s = s[0:i] + _rus_chars[index] + s[i + 1:len(s)]
+        elif s[i] in _rus_chars:
+            index = _rus_chars.find(s[i])
+            s = s[0:i] + _eng_chars[index] + s[i + 1:len(s)]
+    return s

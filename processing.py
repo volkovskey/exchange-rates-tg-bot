@@ -116,6 +116,21 @@ def search_numbers_and_vaults(l):
     answ_ar = [suma, t]
     return answ_ar
 
+def delete_repeat(answ_ar):
+    n = len(answ_ar[0])
+    i = 0
+    while i < n:
+        for j in range(len(answ_ar[0])):
+            print(str(i) + " " +str(j))
+            if answ_ar[1][i] == answ_ar[1][j] and answ_ar[0][i] == answ_ar[0][j] and j != i:
+                answ_ar[0].pop(j)
+                answ_ar[1].pop(j)
+                j -= 1
+                n -= 1
+                break
+        i += 1
+    return answ_ar
+
 def search(a, m):
     suma = []
     i = len(m[0]) - 1
