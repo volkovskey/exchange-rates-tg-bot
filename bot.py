@@ -118,6 +118,30 @@ async def main_void(message: types.Message):
             time.sleep(random.choice([1,2,3]))
         file_id.close()
 
+@dp.message_handler(commands=['unban'])
+async def main_void(message: types.Message):
+    if str(message.chat.id) in config.creator_id:
+        bannedId = (message.text).replace("/unban ", "")
+        if bannedId in bl:
+            bl.remove(bannedId)
+            black_list_update()
+            unbanText = "Вы были разблокированы, пожалуйста, больше не делайте так. Спасибо."
+            if dbhelper.get_set(bannedId, "delete_button"):
+                await bot.send_message(bannedId, unbanText, reply_markup = markup)
+            else:
+                await bot.send_message(bannedId, unbanText)
+            adminText = "Человек был успешно разблокирован."
+            if dbhelper.get_set(message.chat.id, "delete_button"):
+                await message.reply(adminText, reply_markup = markup)
+            else:
+                await message.reply(adminText)
+        else:
+            answerText = "Такой id не найден в чёрном списке."
+            if dbhelper.get_set(message.chat.id, "delete_button"):
+                await message.reply(answerText, reply_markup = markup)
+            else:
+                await message.reply(answerText)
+
 @dp.message_handler(commands=['about'])
 async def main_void(message: types.Message):
     if str(message.from_user.id) in bl:
