@@ -200,8 +200,8 @@ async def main_void(message: types.Message):
         
         #статистика по включенным валютам
         cur_count_array = []
-        for i in config.cur_dict:
-            cur_count_array.append(config.cur_dict[i])
+        for i in config.cur_dict[0]:
+            cur_count_array.append(i)
         cur_count = dict.fromkeys(cur_count_array, 0)
         cur_count_groups = dict.fromkeys(cur_count_array, 0)
         cur_count_private = dict.fromkeys(cur_count_array, 0)

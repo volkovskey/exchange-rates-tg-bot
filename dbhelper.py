@@ -36,8 +36,6 @@ def change_value(chat_id, key, new_value):
     settings = eval(file_dict.read())
     try:
         settings[key] = new_value
-        print(new_value)
-        print(settings)
         file_dict.close()
         file_dict = open(path, "w")
         file_dict.write(str(settings))

@@ -121,7 +121,6 @@ def delete_repeat(answ_ar):
     i = 0
     while i < n:
         for j in range(len(answ_ar[0])):
-            print(str(i) + " " +str(j))
             if answ_ar[1][i] == answ_ar[1][j] and answ_ar[0][i] == answ_ar[0][j] and j != i:
                 answ_ar[0].pop(j)
                 answ_ar[1].pop(j)
