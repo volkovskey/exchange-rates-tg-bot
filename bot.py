@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import TokenForBot
+import SpecialPrint
+from SpecialPrint import Print
 import config
 import processing
 import dbhelper
 import ertb_stats
-import asyncio
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.message import ContentType
 from aiogram.types.inline_keyboard import InlineKeyboardMarkup, InlineKeyboardButton
@@ -17,20 +19,7 @@ import random
 import zipfile
 import sys
 
-#убрать баги +
-#перенести статистику в отдельный файл +
-#добавить настройки удаления +
-#добавить количество активных групп и личек -
-#добавить автопостройку графиков -
-#сделать автоматический бэкап -
-
-#добавить перевод -
-#добавить крипту -
-#добавить inline функционал -
-
-#добавить донат -
-
-bot = Bot(token=config.token) #bot and its atributes declaration
+bot = Bot(token=TokenForBot.token) #bot and its atributes declaration
 dp = Dispatcher(bot)
 
 bl = []
@@ -83,9 +72,9 @@ async def main_void(message: types.Message):
         for i in list_id:
             try:
                 sum_members = sum_members + await bot.get_chat_members_count(i)
-                print("Summary "+str(sum_members))
+                Print("Summary "+str(sum_members))
             except:
-                print("Error count")
+                Print("Error count")
             time.sleep(random.choice([1,2,3]))
         file_id.close()
         await message.reply("Количество участников чатов: " + str(sum_members))
@@ -100,10 +89,10 @@ async def main_void(message: types.Message):
         for i in list_id:
             try:
                 await bot.send_message(i, text, reply_markup = donate)
-                print("Sent "+str(sent_msg)+" messages")
+                Print("Sent "+str(sent_msg)+" messages")
                 sent_msg+=1
             except:
-                print("An error occured while sending message")
+                Print("An error occured while sending message")
             time.sleep(random.choice([1,2,3]))
         file_id.close()
         file_id = open("logs/id_groups.ertb")
@@ -111,10 +100,10 @@ async def main_void(message: types.Message):
         for i in list_id:
             try:
                 await bot.send_message(i, text, reply_markup = donate)
-                print("Sent "+str(sent_msg)+" messages")
+                Print("Sent "+str(sent_msg)+" messages")
                 sent_msg += 1
             except:
-                print("An error occured while sending message")
+                Print("An error occured while sending message")
             time.sleep(random.choice([1,2,3]))
         file_id.close()
 
@@ -294,7 +283,7 @@ async def main_void(message: types.Message):
                 zip_arch.write(path)
             except:
                 answer = "Ошибка добавления. Файл " + i + " пустой или не найден." 
-                print(answer)
+                Print(answer)
         directory = 'settings'
         list_files = os.listdir(directory)
         for i in list_files:
@@ -303,7 +292,7 @@ async def main_void(message: types.Message):
                 zip_arch.write(path)
             except:
                 answer = "Ошибка добавления. Файл " + i + " пустой или не найден." 
-                print(answer)
+                Print(answer)
         zip_arch.close()
         path = "backup.zip"
         report_file = open(path, 'rb')
@@ -322,7 +311,7 @@ async def main_void(message: types.Message):
                 zip_arch.write(path)
             except:
                 answer = "Ошибка добавления. Файл " + i + " пустой или не найден." 
-                print(answer)
+                Print(answer)
         zip_arch.close()
         path = "logs/reports.zip"
         report_file = open(path, 'rb')
@@ -339,7 +328,7 @@ async def main_void(message: types.Message):
             try:
                 os.remove(path)
             except:
-                print("Error delete")
+                Print("Error delete")
 
 @dp.message_handler(commands=['start'])
 async def main_void(message: types.Message):
@@ -364,13 +353,12 @@ async def main_void(message: types.Message):
     if msg_text is None or msg_text == "":
         return
 
-    if consoleLog:
-        #Printing information about input message
-        print("")
-        print("******************************")
-        print("Username: " + str(message.from_user.username) + ", ID: " + str(message.chat.id)+ ", Chat: "+str(message.chat.title))
-        print("")
-        print("Message: " + str(msg_text))
+    #Printing information about input message
+    Print("")
+    Print("******************************")
+    Print("Username: " + str(message.from_user.username) + ", ID: " + str(message.chat.id)+ ", Chat: "+str(message.chat.title))
+    Print("")
+    Print("Message: " + str(msg_text))
     
     #statistics
     ertb_stats.check_chat(message)
@@ -385,14 +373,12 @@ async def main_void(message: types.Message):
 
     #Splitting the text of the message into the necessary components
     mes_ar = processing.special_split(mes)
-    if consoleLog:
-        print("Result array:")
-        print(mes_ar)
+    Print("Result array:")
+    Print(mes_ar)
     
     try:
         p = processing.search_numbers_and_vaults(mes_ar)
-        if consoleLog:
-            print(p)
+        Print(p)
         if p != [[],[]]:
             global logs100
             if len(logs100) >= 100:
@@ -410,7 +396,7 @@ async def main_void(message: types.Message):
                         index100 = i       
 
                 if logs100[len(logs100) - 1][2] - logs100[index100][2] <= 120:
-                    print(bl)
+                    Print(bl)
                     bl.append(str(message.from_user.id))
                     black_list_update()
                     await message.reply("Здравствуйте, вы были заблокированы во избежания большой нагрузки на сервер. Если это произошло случайно, пожалуйста, напишите моим создателям: @volkovskey, @vladikko")
@@ -427,14 +413,13 @@ async def main_void(message: types.Message):
                 else:
                     await message.reply(output)
             except:
-                print("Error")
-            if consoleLog:
-                print("Answer: ")
-                print(output)
+                Print("Error")
+            Print("Answer: ")
+            Print(output)
         elif message.chat.type == "private":
             text = "Валюта или число не обнаружены.\nПопробуйте написать '5 баксов'."
     except:
-        print("Error")
+        Print("Error")
 
 @dp.callback_query_handler(lambda call: True)
 async def cb_answer(call: types.CallbackQuery):
@@ -455,7 +440,7 @@ async def cb_answer(call: types.CallbackQuery):
             elif rule_for_delete == "everybody":
                 can_user_delete_message = True
             else:
-                print("Access denied")
+                Print("Access denied")
         else:
             can_user_delete_message = True
         if can_user_delete_message:
@@ -463,7 +448,7 @@ async def cb_answer(call: types.CallbackQuery):
                 await bot.edit_message_text(call.message.text + "\n\n@" + str(call.from_user.username) + " (id: " + str(call.from_user.id) + ")" +" удалил это сообщение.", call.message.chat.id, call.message.message_id)
                 await call.message.delete()
             except:
-                print("Error delete")
+                Print("Error delete")
     elif call.data == "edit":
         enru_dict = {"creator":"Создатель", "admins":"Администраторы", "everybody":"Все участники"}
         settings = dbhelper.get_dict(call.message.chat.id)
@@ -630,23 +615,42 @@ def black_list_update():
     file_bl.close()
     
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
+    def BotFunctions():
+        Print("thread_exchange_rate is starting...")
+        thread_exchange_rate = Thread(target=config.schedule_update)
+        thread_exchange_rate.start()
+        Print("thread_exchange_rate started.")
+        Print("thread_stats is starting...")
+        thread_stats = Thread(target=ertb_stats.bot_stats)
+        thread_stats.start()
+        Print("thread_stats started.")
+        Print("Checking the settings...")
+        assignment_of_settings()
+        Print("Settings checked.")
+        Print("Reading the blacklist...")
+        black_list()
+        Print("Blacklist read.")
+        print("\nERTB v. 1.7.0 is ready.")
+        print("by volkovskey and vladikko.\n")
+        executor.start_polling(dp, skip_updates=True)
+
+    if len(sys.argv) == 3:
         param_name = sys.argv[1]
         param_value = sys.argv[2]
         if (param_name == "--logs" or param_name == "-l"):
             if param_value == "on":
-                consoleLog = True
+                SpecialPrint.consoleLog = True
+                BotFunctions()
             elif param_value == "off":
-                consoleLog = False
+                SpecialPrint.consoleLog = False
+                BotFunctions()
+            else:
+                print("Error: unknown value '{}'".format (param_value) )
+                sys.exit(1)
         else:
-            print ("Error. Unknow parametr '{}'".format (param_name) )
+            print("Error: unknown parametr '{}'".format (param_parametr) )
             sys.exit(1)
+    elif len(sys.argv) == 1:
+        BotFunctions()
     else:
-        pass
-    thread_exchange_rate = Thread(target=config.schedule_update)
-    thread_exchange_rate.start()
-    thread_stats = Thread(target=ertb_stats.bot_stats)
-    thread_stats.start()
-    assignment_of_settings()
-    black_list()
-    executor.start_polling(dp, skip_updates=True)
+        print("Error. Try: python3 Bot.py -l on")
